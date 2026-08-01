@@ -1,0 +1,25 @@
+name: Backup and Sync Vision Memory
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Archive memory database
+        run: |
+          tar -czvf vision_memory_backup.tar.gz vision_memory.db || true
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "Vision Backup Bot"
+          git config --global user.email "bot@ctisoluciones.com"
+          git add vision_memory_backup.tar.gz || true
+          git commit -m "Automated memory backup sync" || true
+          git push || true

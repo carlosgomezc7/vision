@@ -1,0 +1,7 @@
+# VISION - Servidor MCP & Memoria Sintética
+.venv/
+__pycache__/
+*.pyc
+chroma_db/
+.env
+.DS_Store
