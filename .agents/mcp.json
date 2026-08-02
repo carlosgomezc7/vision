@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "vision": {
+      "type": "stdio",
+      "command": "/home/carlos/Documents/vision/.venv/bin/python",
+      "args": ["-m", "src.main"],
+      "cwd": "/home/carlos/Documents/vision"
+    }
+  }
+}
