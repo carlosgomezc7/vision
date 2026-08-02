@@ -29,3 +29,12 @@ python -m src.main
 ```bash
 source .venv/bin/activate && python -m src.main
 ```
+
+### 4. Activar auto-commit (commits automáticos cada 30 min)
+En una terminal separada, corre el siguiente script para que los cambios se suban a GitHub automáticamente:
+
+```bash
+python src/auto_commit.py
+```
+
+> Detecta cambios en el repositorio y hace `git add`, `commit` y `push` cada 30 minutos. Usa `Ctrl+C` para detenerlo.
