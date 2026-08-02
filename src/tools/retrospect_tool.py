@@ -9,5 +9,5 @@ def record_lesson_learned(project_name: str, lesson: str) -> str:
         doc_id=doc_id,
         text=f"Proyecto: {project_name}. Lección/Decisión: {lesson}",
         metadata={"type": "retrospective", "project": project_name}
-    ]
+    )
     return f"Lección registrada exitosamente en la memoria de VISION para el proyecto '{project_name}'."
