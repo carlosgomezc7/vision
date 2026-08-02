@@ -7,3 +7,25 @@
 - `src/memory/`: Almacenamiento vectorial y sembrado de memoria.
 - `src/tools/`: Herramientas especializadas para PRDs, Arquitectura y Retrospectivas.
 - `src/seed_data/`: Documentación base de conocimiento.
+
+## Cómo iniciar
+
+### 1. Activar el entorno virtual
+```bash
+source .venv/bin/activate
+```
+
+### 2. Instalar dependencias (solo la primera vez)
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Iniciar el servidor MCP
+```bash
+python -m src.main
+```
+
+### Comando rápido
+```bash
+source .venv/bin/activate && python -m src.main
+```
