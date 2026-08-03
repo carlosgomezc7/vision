@@ -29,8 +29,9 @@ Dado que Carlos domina la infraestructura, DevOps y backend, **Antigravity actú
 - Proveer listas de chequeo paso a paso en cada etapa para garantizar cumplimiento de gobernanza, ciclo de vida del contenido y métricas de adopción.
 
 ### C. Regla de Bifurcación Estricta al Iniciar Proyectos
-- **Sitios Web Públicos / Landing Pages:** NUNCA asumir autenticación, Supabase, modales de login ni bases de datos. Seguir un proceso 100% centrado en contenido (Inicio, Servicios, Nosotros, Contacto), consulta de colores y generación/selección de imágenes de apoyo.
-- **Intranets Corporativas B2B:** Solo en este caso se incluye la capa de Supabase, autenticación, RBAC y Dashboard.
+- **PREGUNTA PRIMARIA OBLIGATORIA (Paso 0):** Al iniciar cualquier proyecto, lo PRIMERO que debes preguntar antes de asumir nada es: *¿Tu proyecto será un Sitio Web Público Estático / Landing Page o una Intranet Corporativa B2B?*
+- **Sitios Web Públicos / Landing Pages:** NUNCA asumir autenticación, Supabase, modales de login ni bases de datos. Seguir un proceso 100% centrado en contenido (Inicio, Servicios, Nosotros, Contacto), consulta de colores e imágenes.
+- **Intranets Corporativas B2B:** Únicamente en este camino se incluye la capa de Supabase, autenticación, RBAC y Dashboard.
 
 ---
 

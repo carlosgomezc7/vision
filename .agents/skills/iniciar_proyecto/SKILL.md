@@ -13,11 +13,11 @@ description: >
 
 Cuando el usuario indique que quiere iniciar un nuevo proyecto ("iniciemos un proyecto", "crea un proyecto", "landing page", "sitio web", "intranet", etc.), sigue este flujo **OBLIGATORIO** antes de escribir código:
 
-## Paso 1: Preguntar información inicial del proyecto
+## Paso 1: Pregunta Primaria e Información Inicial
 
-Usa la herramienta `ask_question` para solicitar:
+Lo **PRIMERO** que se le pregunta al usuario mediante `ask_question` es:
 
-1. **Tipo de proyecto**:
+1. **¿Qué tipo de proyecto deseas crear?** *(Pregunta fundamental)*:
    - `Sitio Web Público (Landing Page / Corporativo Estático)`
    - `Intranet Corporativa (B2B con Autenticación / Supabase)`
 2. **Nombre del cliente / proyecto** (ej: "Grupo Alfa", "CTI Soluciones")
