@@ -9,74 +9,91 @@ description: >
   con la intención de iniciar/crear/arrancar un proyecto nuevo de intranet.
 ---
 
-# Skill: Iniciar Proyecto de Intranet B2B
+# Skill: Iniciar Proyecto (Sitio Web Público vs Intranet B2B)
 
-Cuando el usuario indique que quiere iniciar un nuevo proyecto, sigue este flujo **OBLIGATORIO** antes de escribir cualquier línea de código:
+Cuando el usuario indique que quiere iniciar un nuevo proyecto ("iniciemos un proyecto", "crea un proyecto", "landing page", "sitio web", "intranet", etc.), sigue este flujo **OBLIGATORIO** antes de escribir código:
 
-## Paso 1: Preguntar información del proyecto
+## Paso 1: Preguntar información inicial del proyecto
 
 Usa la herramienta `ask_question` para solicitar:
 
-1. **Tipo de proyecto** — Sitio Web Público (Landing Page/Corporativo) vs Intranet Corporativa (B2B con Auth)
-2. **Nombre del cliente** — Este será el nombre del proyecto (ej: "Grupo Alfa", "Corporativo Beta")
-3. **Ruta del proyecto** — Dónde crear el proyecto en el filesystem (ej: `/home/carlos/Documents/grupo-alfa`)
-4. **¿Inicializar repositorio Git?** — Sí / No
+1. **Tipo de proyecto**:
+   - `Sitio Web Público (Landing Page / Corporativo Estático)`
+   - `Intranet Corporativa (B2B con Autenticación / Supabase)`
+2. **Nombre del cliente / proyecto** (ej: "Grupo Alfa", "CTI Soluciones")
+3. **Ruta del proyecto en el filesystem** (ej: `/home/carlos/Documents/ctisoluciones`)
+4. **¿Inicializar repositorio Git?** (Sí / No)
 
-## Paso 2: Crear el proyecto
+---
 
-Una vez que el usuario responda, ejecuta estos pasos en orden:
+## BIFURCACIÓN A: Sitio Web Público / Landing Page Estática
 
-### 2.1 Crear directorio e inicializar Next.js
+Si el usuario elige **Sitio Web Público / Landing Page**:
+
+### A.1 NO instalar Supabase ni crear carpetas de Autenticación
+No crear `src/lib/supabase/`, ni `src/app/login/`, ni `src/app/dashboard/`, ni `middleware.ts`.
+
+### A.2 Preguntar detalles de Contenido y Diseño
+Realizar las siguientes preguntas (o usar `ask_question` / diálogo interactivo):
+1. **Páginas / Secciones requeridas** (Inicio, Servicios, Nosotros, Contacto).
+2. **Contenido de cada sección**:
+   - **Inicio**: Eslogan principal, llamada a la acción (CTA).
+   - **Servicios**: Lista de servicios clave y descripciones.
+   - **Nosotros**: Historia, misión o propuesta de valor.
+   - **Contacto**: Datos de contacto (correo, teléfono, dirección, formulario).
+3. **Estilo Visual y Colores**: Paleta de colores preferida (tonos oscuros/claros, azul corporativo, verde, etc.).
+4. **Imágenes y Recursos Visuales**:
+   - ¿El cliente proporciona imágenes propias?
+   - Si no las proporciona, generarlas autónomamente con `generate_image` o usar componentes gráficos modernos en React.
+
+### A.3 Crear la estructura Next.js pura
 ```bash
 mkdir -p <ruta-del-proyecto>
 cd <ruta-del-proyecto>
 npx -y create-next-app@latest ./ --typescript --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --yes
 ```
 
-### 2.2 Instalar dependencias estándar
+### A.4 Instalar dependencias visuales (Lucide icons, shadcn UI)
 ```bash
 npx -y shadcn@latest init --yes --defaults --force
-npm install @supabase/supabase-js @supabase/ssr
+npm install lucide-react
 ```
 
-### 2.3 Copiar código funcional estándar
+### A.5 Construir la experiencia limpia y verificar
+- Implementar la estructura navegable (Inicio, Servicios, Nosotros, Contacto) sin dependencias a backend ni base de datos.
+- Ejecutar `npm run build` y `npm run dev`.
 
-Consulta la memoria de VISION (documento `06_codigo_auth_reutilizable.md`) y crea estos archivos **exactamente como están documentados** (NO se modifican por cliente):
+---
 
+## BIFURCACIÓN B: Intranet Corporativa B2B (con Auth Supabase)
+
+Si el usuario elige **Intranet Corporativa (B2B con Auth)**:
+
+### B.1 Crear directorio e inicializar Next.js
+```bash
+mkdir -p <ruta-del-proyecto>
+cd <ruta-del-proyecto>
+npx -y create-next-app@latest ./ --typescript --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --yes
+```
+
+### B.2 Instalar dependencias estándar
+```bash
+npx -y shadcn@latest init --yes --defaults --force
+npm install @supabase/supabase-js @supabase/ssr lucide-react
+```
+
+### B.3 Copiar código funcional estándar de Auth
+Crear:
 - `src/lib/supabase/client.ts`
 - `src/lib/supabase/server.ts`
 - `src/lib/supabase/middleware.ts`
 - `src/middleware.ts`
 - `src/app/login/actions.ts`
-- `src/app/page.tsx`
+- `src/app/login/page.tsx`
+- `src/app/dashboard/page.tsx`
 - `.env.local.example`
 
-### 2.4 Crear archivos personalizables
+### B.4 Solicitar credenciales Supabase y verificar
+- Configurar `.env.local`
+- Ejecutar `npm run build` y `npm run dev`
 
-Consulta la memoria de VISION (documento `07_personalizacion_visual_login.md`) y crea versiones personalizadas con el nombre del cliente:
-
-- `src/app/globals.css` — Preguntar estilo de color preferido
-- `src/app/login/page.tsx` — Con el logo y nombre del cliente
-- `src/app/dashboard/page.tsx` — Con branding del cliente
-- `src/app/layout.tsx` — Con metadata del cliente
-
-### 2.5 Inicializar Git (si el usuario lo solicitó)
-```bash
-git init
-git add .
-git commit -m "feat: setup inicial intranet <nombre-cliente>"
-```
-
-## Paso 3: Solicitar credenciales de Supabase
-
-Preguntar al usuario por las credenciales:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-Crear `.env.local` con los valores proporcionados.
-
-## Paso 4: Verificar
-
-- Ejecutar `npm run build` para verificar que todo compila.
-- Ejecutar `npm run dev` para levantar el servidor.
-- Confirmar al usuario que el proyecto está listo.
