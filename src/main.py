@@ -109,4 +109,6 @@ def vision_system_prompt() -> str:
     return f"Eres VISION, el copilot de CTI Soluciones. Directrices del sistema:\n\n{SYSTEM_INSTRUCTIONS}"
 
 if __name__ == "__main__":
+    print("🚀 ¡Antigravity / VISION listo! Ya puedes trabajar.", file=sys.stderr)
     mcp.run()
+

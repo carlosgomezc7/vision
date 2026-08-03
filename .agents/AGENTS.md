@@ -59,3 +59,10 @@ Dado que Carlos domina la infraestructura, DevOps y backend, **Antigravity actú
 ### Fase 5: Gobernanza, Piloto y Despliegue
 - **Antigravity te guía en:** Definir reglas de retiro/archivo automático de contenido (auditorías cada 90-180 días) y preparar la prueba piloto con 20-50 usuarios.
 - **Tu ejecución (DevOps/Infra):** Monitorear métricas de rendimiento y telemetría de uso del sistema.
+
+---
+
+## 5. Protocolo de Inicio de Sesión y Confirmación de Disponibilidad
+- **Mensaje de Consola:** Al iniciar Antigravity o arrancar el servidor MCP / entorno de trabajo, se debe emitir/confirmar en consola el mensaje claro de disponibilidad:
+  `🚀 ¡Antigravity listo! Ya puedes trabajar.`
+

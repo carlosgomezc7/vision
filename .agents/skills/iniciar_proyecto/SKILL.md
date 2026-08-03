@@ -17,9 +17,10 @@ Cuando el usuario indique que quiere iniciar un nuevo proyecto, sigue este flujo
 
 Usa la herramienta `ask_question` para solicitar:
 
-1. **Nombre del cliente** — Este será el nombre del proyecto (ej: "Grupo Alfa", "Corporativo Beta")
-2. **Ruta del proyecto** — Dónde crear el proyecto en el filesystem (ej: `/home/carlos/Documents/grupo-alfa`)
-3. **¿Inicializar repositorio Git?** — Sí / No
+1. **Tipo de proyecto** — Sitio Web Público (Landing Page/Corporativo) vs Intranet Corporativa (B2B con Auth)
+2. **Nombre del cliente** — Este será el nombre del proyecto (ej: "Grupo Alfa", "Corporativo Beta")
+3. **Ruta del proyecto** — Dónde crear el proyecto en el filesystem (ej: `/home/carlos/Documents/grupo-alfa`)
+4. **¿Inicializar repositorio Git?** — Sí / No
 
 ## Paso 2: Crear el proyecto
 
