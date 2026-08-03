@@ -17,6 +17,8 @@ from src.tools.ux_design_tool import (
     generate_w3c_design_tokens,
     audit_performance_budget,
 )
+from src.tools.issue_tracker import record_issue, list_recorded_issues
+from src.tools.system_info import format_system_info_report
 
 SYSTEM_INSTRUCTIONS = """
 VISION - CTI Soluciones (MCP Context)
@@ -80,6 +82,21 @@ def generate_design_tokens_w3c(color_palette: dict, typography: dict = None, spa
 def check_performance_budget(framework: str, estimated_js_kb: float, animations_count: int) -> str:
     """Audita el presupuesto de rendimiento para garantizar Core Web Vitals (INP < 200ms, LCP < 2.5s, CLS <= 0.1)."""
     return audit_performance_budget(framework, estimated_js_kb, animations_count)
+
+@mcp.tool()
+def log_incident_issue(title: str, category: str, description_es: str, description_en: str, solution: str = "", status: str = "Solucionado") -> str:
+    """Registra una incidencia o issue en el sistema de seguimiento de VISION (SQLite + ISSUES.md)."""
+    return record_issue(title, category, description_es, description_en, solution, status)
+
+@mcp.tool()
+def get_issues_log() -> str:
+    """Consulta el historial completo de incidencias registradas en la base de datos de VISION."""
+    return list_recorded_issues()
+
+@mcp.tool()
+def detect_system_environment() -> str:
+    """Detecta automáticamente el entorno del sistema operativo (Omarch / Arch Linux), kernel y estado de Python."""
+    return format_system_info_report()
 
 @mcp.resource("config://system_context")
 def get_system_context_resource() -> str:
