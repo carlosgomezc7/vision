@@ -2,9 +2,10 @@ import sqlite3
 import json
 import os
 from datetime import datetime
+from src.config import DB_PATH, ISSUES_MD_PATH
 
-DB_PATH = os.path.expanduser("~/Documents/vision/vision_memory.db")
-ISSUES_MD_PATH = os.path.expanduser("~/Documents/vision/ISSUES.md")
+DB_PATH = str(DB_PATH)
+ISSUES_MD_PATH = str(ISSUES_MD_PATH)
 
 def _init_issues_db():
     conn = sqlite3.connect(DB_PATH)

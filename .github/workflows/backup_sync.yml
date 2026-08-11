@@ -1,4 +1,4 @@
-name: Backup and Sync Vision Memory
+name: Backup Vision Memory DB
 
 on:
   push:
@@ -12,14 +12,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Archive memory database
-        run: |
-          tar -czvf vision_memory_backup.tar.gz vision_memory.db || true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Commit and push if changed
+      - name: Export SQLite DB to JSON
         run: |
-          git config --global user.name "Vision Backup Bot"
-          git config --global user.email "bot@ctisoluciones.com"
-          git add vision_memory_backup.tar.gz || true
-          git commit -m "Automated memory backup sync" || true
-          git push || true
+          python3 - <<'EOF'
+          import sqlite3, json, os, sys
+          db_path = "vision_memory.db"
+          if not os.path.exists(db_path):
+              print("ℹ️  No se encontró vision_memory.db — nada que respaldar.")
+              sys.exit(0)
+          conn = sqlite3.connect(db_path)
+          conn.row_factory = sqlite3.Row
+          export = {}
+          for table in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall():
+              t = table["name"]
+              export[t] = [dict(r) for r in conn.execute(f"SELECT * FROM {t}").fetchall()]
+          conn.close()
+          with open("vision_memory_backup.json", "w", encoding="utf-8") as f:
+              json.dump(export, f, ensure_ascii=False, indent=2)
+          print(f"✅ Backup exportado: {len(export)} tablas")
+          EOF
+
+      - name: Upload backup as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vision-memory-backup-${{ github.sha }}
+          path: vision_memory_backup.json
+          retention-days: 30
+          if-no-files-found: ignore

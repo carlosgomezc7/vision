@@ -1,9 +1,10 @@
 import os
 from src.memory.vector_store import VisionMemoryStore
+from src.config import SEED_DATA_DIR
 
 def seed_vision_mind():
     store = VisionMemoryStore()
-    seed_dir = os.path.expanduser("~/Documents/vision/src/seed_data")
+    seed_dir = str(SEED_DATA_DIR)
     
     if not os.path.exists(seed_dir):
         print(f"Directorio seed_data no encontrado: {seed_dir}")

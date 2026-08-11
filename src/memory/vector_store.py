@@ -1,12 +1,11 @@
 import os
 import sqlite3
 import json
+from src.config import DB_PATH
 
 class VisionMemoryStore:
     def __init__(self, db_path: str = None):
-        if db_path is None:
-            db_path = os.path.expanduser("~/Documents/vision/vision_memory.db")
-        self.db_path = db_path
+        self.db_path = str(db_path or DB_PATH)
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         self._init_db()
 

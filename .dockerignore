@@ -1,0 +1,42 @@
+# ==============================================================================
+# .dockerignore — VISION MCP Server
+# ==============================================================================
+
+# Version control
+.git
+.github
+.gitignore
+
+# Python artifacts
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Agent configs (dev-only)
+.agents/
+
+# Databases & runtime data (use Docker volumes instead)
+*.db
+chroma_db/
+
+# Env files (secrets should be injected via Docker env vars)
+.env
+.env.*
+
+# Archives & docs not needed in the image
+*.zip
+*.pdf
+scratch/
+
+# Dockerfile itself
+Dockerfile
+docker-compose*.yml
