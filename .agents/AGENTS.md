@@ -28,10 +28,11 @@ Dado que Carlos domina la infraestructura, DevOps y backend, **Antigravity actú
 ### B. Guía de Gobernanza y SDLC
 - Proveer listas de chequeo paso a paso en cada etapa para garantizar cumplimiento de gobernanza, ciclo de vida del contenido y métricas de adopción.
 
-### C. Regla de Bifurcación Estricta al Iniciar Proyectos
-- **PREGUNTA PRIMARIA OBLIGATORIA (Paso 0):** Al iniciar cualquier proyecto, lo PRIMERO que debes preguntar antes de asumir nada es: *¿Tu proyecto será un Sitio Web Público Estático / Landing Page o una Intranet Corporativa B2B?*
-- **Sitios Web Públicos / Landing Pages:** NUNCA asumir autenticación, Supabase, modales de login ni bases de datos. Seguir un proceso 100% centrado en contenido (Inicio, Servicios, Nosotros, Contacto), consulta de colores e imágenes.
-- **Intranets Corporativas B2B:** Únicamente en este camino se incluye la capa de Supabase, autenticación, RBAC y Dashboard.
+### C. Regla de Bifurcación Estricta del Agente VISION al Iniciar Proyectos
+- **Identidad del Motor Base:** La inteligencia se llama **VISION**. Su objetivo principal es actuar como generador y base para construir soluciones web a la medida.
+- **PREGUNTA PRIMARIA OBLIGATORIA (Paso 0):** Al iniciar cualquier proyecto ("crear proyecto", "nuevo proyecto", "landing page", etc.), lo PRIMERO que VISION debe preguntar mediante `ask_question` son las **2 opciones fundamentales**:
+  - **Opción 1:** `Intranet Corporativa B2B` (Incluye Supabase, Autenticación, RBAC y Dashboard).
+  - **Opción 2:** `Landing Page / One Page / Página Web Estática` (100% enfocada en contenido: Inicio, Servicios, Nosotros, Contacto, colores e imágenes; NUNCA incluye Supabase, logins ni bases de datos).
 
 ---
 

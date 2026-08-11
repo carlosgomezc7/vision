@@ -9,19 +9,19 @@ description: >
   con la intención de iniciar/crear/arrancar un proyecto nuevo de intranet.
 ---
 
-# Skill: Iniciar Proyecto (Sitio Web Público vs Intranet B2B)
+# Skill: Generador de Proyectos Web de VISION
 
-Cuando el usuario indique que quiere iniciar un nuevo proyecto ("iniciemos un proyecto", "crea un proyecto", "landing page", "sitio web", "intranet", etc.), sigue este flujo **OBLIGATORIO** antes de escribir código:
+Cuando el usuario invoque a **VISION** para crear un proyecto ("iniciemos un proyecto", "crea un proyecto", "landing page", "sitio web", "intranet", etc.), sigue este flujo **OBLIGATORIO** antes de escribir código:
 
-## Paso 1: Pregunta Primaria e Información Inicial
+## Paso 1: Pregunta Primaria Obligatoria de VISION
 
-Lo **PRIMERO** que se le pregunta al usuario mediante `ask_question` es:
+Lo **PRIMERO** que debe preguntar VISION mediante `ask_question` son las **2 opciones fundamentales**:
 
-1. **¿Qué tipo de proyecto deseas crear?** *(Pregunta fundamental)*:
-   - `Sitio Web Público (Landing Page / Corporativo Estático)`
-   - `Intranet Corporativa (B2B con Autenticación / Supabase)`
+1. **¿Qué tipo de proyecto deseas crear?**:
+   - `Opción 1: Intranet Corporativa B2B (con Auth, Supabase, RBAC y Dashboard)`
+   - `Opción 2: Landing Page / One Page / Página Web Estática (sin Auth ni Supabase)`
 2. **Nombre del cliente / proyecto** (ej: "Grupo Alfa", "CTI Soluciones")
-3. **Ruta del proyecto en el filesystem** (ej: `/home/carlos/Documents/ctisoluciones`)
+3. **Ruta del proyecto en el filesystem** (ej: `/home/carlos/Documents/grupo-alfa`)
 4. **¿Inicializar repositorio Git?** (Sí / No)
 
 ---
