@@ -61,6 +61,7 @@ npm install lucide-react
 
 ### A.5 Construir la experiencia limpia y verificar
 - Implementar la estructura navegable (Inicio, Servicios, Nosotros, Contacto) sin dependencias a backend ni base de datos.
+- **REGLA DE ARQUITECTURA FRONTEND (LANDING PAGE):** La página principal NUNCA debe ser un solo archivo gigante (`src/app/page.tsx`). Debe modularizarse por secciones en la carpeta `src/components/landing/` (ej. `Header.tsx`, `Hero.tsx`, `Services.tsx`, `Contact.tsx`, `Footer.tsx`) y luego importarse en `page.tsx`. Conservar el diseño de botones superiores.
 - Ejecutar `npm run build` y `npm run dev`.
 
 ---
