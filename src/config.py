@@ -17,3 +17,7 @@ SEED_DATA_DIR = PROJECT_ROOT / "src" / "seed_data"
 
 # Archivo de registro de incidencias
 ISSUES_MD_PATH = PROJECT_ROOT / "ISSUES.md"
+
+# Directorio de logs
+LOGS_DIR = PROJECT_ROOT / "logs"
+LOG_FILE = LOGS_DIR / "vision.log"

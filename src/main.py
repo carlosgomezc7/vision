@@ -19,6 +19,12 @@ from src.tools.ux_design_tool import (
 )
 from src.tools.issue_tracker import record_issue, list_recorded_issues
 from src.tools.system_info import format_system_info_report
+from src.logger import setup_logging, get_logger
+from src.config import LOG_FILE
+
+# Configurar logging antes de cualquier otra operación
+setup_logging(log_file=LOG_FILE)
+logger = get_logger("vision.main")
 
 SYSTEM_INSTRUCTIONS = """
 VISION - CTI Soluciones (MCP Context)
@@ -40,68 +46,93 @@ mcp = FastMCP("VISION - CTI Soluciones", instructions=SYSTEM_INSTRUCTIONS)
 try:
     seed_vision_mind()
 except Exception as e:
-    print(f"Aviso al sembrar memoria: {e}", file=sys.stderr)
+    logger.error("Error al sembrar memoria: %s", e, exc_info=True)
 
 store = VisionMemoryStore()
+
+
+def _safe_tool_call(func, *args, **kwargs) -> str:
+    """Wrapper centralizado para capturar excepciones en herramientas MCP."""
+    try:
+        return func(*args, **kwargs)
+    except Exception as e:
+        logger.error("Error en herramienta MCP %s: %s", func.__name__, e, exc_info=True)
+        return f"⚠️ Error interno en la herramienta '{func.__name__}': {e}"
+
 
 @mcp.tool()
 def query_vision_memory(query: str) -> str:
     """Busca en la memoria sintética y base de conocimiento de VISION."""
+    return _safe_tool_call(_query_vision_memory_impl, query)
+
+
+def _query_vision_memory_impl(query: str) -> str:
     results = store.query_memory(query, n_results=3)
     docs = results.get("documents", [[]])[0]
     if not docs:
         return "No se encontraron memorias relevantes."
     return "\n\n".join(docs)
 
+
 @mcp.tool()
 def create_intranet_prd(company_name: str, employee_count: int, modules: list, sso_provider: str) -> str:
     """Genera el PRD corporativo para una Intranet B2B."""
-    return generate_intranet_prd(company_name, employee_count, modules, sso_provider)
+    return _safe_tool_call(generate_intranet_prd, company_name, employee_count, modules, sso_provider)
+
 
 @mcp.tool()
 def consult_architecture(topic: str) -> str:
     """Consulta los blueprints técnicos y de Deep Search en la memoria."""
-    return get_architecture_blueprint(topic)
+    return _safe_tool_call(get_architecture_blueprint, topic)
+
 
 @mcp.tool()
 def log_retrospective(project_name: str, lesson: str) -> str:
     """Registra un aprendizaje o retrospectiva del proyecto."""
-    return record_lesson_learned(project_name, lesson)
+    return _safe_tool_call(record_lesson_learned, project_name, lesson)
+
 
 @mcp.tool()
 def check_wcag_accessibility(fg_hex: str, bg_hex: str, is_large_text: bool = False) -> str:
     """Valida el contraste WCAG 2.2 Nivel AA estricto (4.5:1 texto normal, 3.0:1 texto grande) sin redondear."""
-    return validate_wcag_contrast(fg_hex, bg_hex, is_large_text)
+    return _safe_tool_call(validate_wcag_contrast, fg_hex, bg_hex, is_large_text)
+
 
 @mcp.tool()
 def generate_design_tokens_w3c(color_palette: dict, typography: dict = None, spacing: dict = None) -> str:
     """Genera tokens de diseño bajo especificación estricta W3C DTCG ($value, $type, $description)."""
-    return generate_w3c_design_tokens(color_palette, typography, spacing)
+    return _safe_tool_call(generate_w3c_design_tokens, color_palette, typography, spacing)
+
 
 @mcp.tool()
 def check_performance_budget(framework: str, estimated_js_kb: float, animations_count: int) -> str:
     """Audita el presupuesto de rendimiento para garantizar Core Web Vitals (INP < 200ms, LCP < 2.5s, CLS <= 0.1)."""
-    return audit_performance_budget(framework, estimated_js_kb, animations_count)
+    return _safe_tool_call(audit_performance_budget, framework, estimated_js_kb, animations_count)
+
 
 @mcp.tool()
 def log_incident_issue(title: str, category: str, description_es: str, description_en: str, solution: str = "", status: str = "Solucionado") -> str:
     """Registra una incidencia o issue en el sistema de seguimiento de VISION (SQLite + ISSUES.md)."""
-    return record_issue(title, category, description_es, description_en, solution, status)
+    return _safe_tool_call(record_issue, title, category, description_es, description_en, solution, status)
+
 
 @mcp.tool()
 def get_issues_log() -> str:
     """Consulta el historial completo de incidencias registradas en la base de datos de VISION."""
-    return list_recorded_issues()
+    return _safe_tool_call(list_recorded_issues)
+
 
 @mcp.tool()
 def detect_system_environment() -> str:
     """Detecta automáticamente el entorno del sistema operativo (Omarch / Arch Linux), kernel y estado de Python."""
-    return format_system_info_report()
+    return _safe_tool_call(format_system_info_report)
+
 
 @mcp.resource("config://system_context")
 def get_system_context_resource() -> str:
     """Recurso MCP que expone el contexto y directrices del sistema VISION - CTI Soluciones."""
     return SYSTEM_INSTRUCTIONS
+
 
 @mcp.prompt()
 def vision_system_prompt() -> str:
@@ -109,6 +140,5 @@ def vision_system_prompt() -> str:
     return f"Eres VISION, el copilot de CTI Soluciones. Directrices del sistema:\n\n{SYSTEM_INSTRUCTIONS}"
 
 if __name__ == "__main__":
-    print("🚀 ¡Antigravity / VISION listo! Ya puedes trabajar.", file=sys.stderr)
+    logger.info("🚀 VISION MCP Server iniciado y listo para trabajar.")
     mcp.run()
-
