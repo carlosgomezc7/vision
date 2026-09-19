@@ -1,15 +1,15 @@
-# Cuestionario de Diagnóstico Corporativo (Intake Intranet)
+# Corporate Diagnostic Questionnaire (Intranet Intake)
 
-Para iniciar el desarrollo de una Intranet con CTI Soluciones, el cliente responde al siguiente árbol de decisiones:
+To start development of an Intranet with CTI Soluciones, the client answers the following decision tree:
 
-1. **Tamaño Organizacional y Áreas:**
-   - Número de colaboradores (10-50, 50-250, 250+).
-   - Departamentos involucrados (RRHH, TI, Operaciones, Ventas, Dirección).
-2. **Seguridad, Autenticación y Roles (RBAC):**
-   - Proveedor de SSO (Microsoft 365 / Azure AD, Google Workspace, Okta).
-   - Jerarquía de roles: Administrador Global, Líder de Área, Empleado, Auditor.
-3. **Módulos Críticos Requeridos:**
-   - **Gestión Documental & Base de Conocimiento:** Repositorio centralizado de manuales y políticas.
-   - **Deep Search (Asistente IA):** Búsqueda semántica conversacional sobre documentos internos.
-   - **Mesa de Ayuda (Helpdesk):** Tickets internos y solicitudes de soporte.
-   - **Comunicación Interna:** Anuncios corporativos y directorio de empleados.
+1. **Organizational Size and Departments:**
+   - Number of employees (10-50, 50-250, 250+).
+   - Departments involved (HR, IT, Operations, Sales, Management).
+2. **Security, Authentication, and Roles (RBAC):**
+   - SSO provider (Microsoft 365 / Azure AD, Google Workspace, Okta).
+   - Role hierarchy: Global Admin, Area Lead, Employee, Auditor.
+3. **Required Critical Modules:**
+   - **Document Management & Knowledge Base:** Centralized repository of manuals and policies.
+   - **Deep Search (AI Assistant):** Conversational semantic search over internal documents.
+   - **Help Desk:** Internal tickets and support requests.
+   - **Internal Communications:** Corporate announcements and employee directory.

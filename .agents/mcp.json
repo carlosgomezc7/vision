@@ -2,9 +2,9 @@
   "servers": {
     "vision": {
       "type": "stdio",
-      "command": "/home/carlos/Documents/vision/.venv/bin/python",
+      "command": "/home/carlosgomezc7/Projects/vision/.venv/bin/python",
       "args": ["-m", "src.main"],
-      "cwd": "/home/carlos/Documents/vision"
+      "cwd": "/home/carlosgomezc7/Projects/vision"
     }
   }
 }

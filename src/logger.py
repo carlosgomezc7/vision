@@ -1,6 +1,6 @@
 """
-logger.py — Configuración centralizada de logging para VISION.
-Todos los módulos deben importar get_logger() en lugar de usar print().
+logger.py — Centralized logging configuration for VISION.
+All modules should import get_logger() instead of using print().
 """
 
 import logging
@@ -12,7 +12,7 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def setup_logging(level: int = logging.INFO, log_file: Path = None) -> None:
-    """Configura el logger raíz de VISION con handlers para consola y archivo opcional."""
+    """Configures the VISION root logger with handlers for console and optional file output."""
     handlers = [logging.StreamHandler(sys.stderr)]
 
     if log_file:
@@ -29,5 +29,5 @@ def setup_logging(level: int = logging.INFO, log_file: Path = None) -> None:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """Obtiene un logger con el namespace dado."""
+    """Returns a logger with the given namespace."""
     return logging.getLogger(name)

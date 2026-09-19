@@ -19,7 +19,7 @@ class TestVisionMemoryStore:
         self.store = VisionMemoryStore(db_path=self.db_path)
 
     def teardown_method(self):
-        # Limpiar archivos WAL
+        # Clean up WAL files
         for ext in ["", "-wal", "-shm"]:
             p = self.db_path + ext
             if os.path.exists(p):
@@ -27,20 +27,20 @@ class TestVisionMemoryStore:
         os.rmdir(self.tmp_dir)
 
     def test_add_and_query_memory(self):
-        self.store.add_memory("doc_1", "Texto de prueba sobre intranet corporativa", {"type": "test"})
+        self.store.add_memory("doc_1", "Test text about corporate intranet", {"type": "test"})
         results = self.store.query_memory("intranet", n_results=1)
         docs = results.get("documents", [[]])[0]
         assert len(docs) == 1
         assert "intranet" in docs[0].lower()
 
     def test_query_no_results(self):
-        self.store.add_memory("doc_1", "Texto sobre recetas de cocina", {"type": "test"})
-        results = self.store.query_memory("seguridad informática", n_results=1)
+        self.store.add_memory("doc_1", "Text about cooking recipes", {"type": "test"})
+        results = self.store.query_memory("information security", n_results=1)
         docs = results.get("documents", [[]])[0]
         assert len(docs) == 0
 
     def test_wal_mode_enabled(self):
-        """Verifica que WAL mode esté activado en la base de datos."""
+        """Verifies that WAL mode is enabled on the database."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         cursor.execute("PRAGMA journal_mode;")
@@ -49,17 +49,26 @@ class TestVisionMemoryStore:
         assert mode.lower() == "wal"
 
     def test_replace_existing_memory(self):
-        self.store.add_memory("doc_1", "Texto original", {"type": "test"})
-        self.store.add_memory("doc_1", "Texto actualizado", {"type": "test"})
-        results = self.store.query_memory("actualizado", n_results=1)
+        self.store.add_memory("doc_1", "Original text", {"type": "test"})
+        self.store.add_memory("doc_1", "Updated text", {"type": "test"})
+        results = self.store.query_memory("updated", n_results=1)
         docs = results.get("documents", [[]])[0]
         assert len(docs) == 1
-        assert "actualizado" in docs[0]
+        assert "updated" in docs[0].lower()
 
     def test_metadata_preserved(self):
         meta = {"client": "CTI", "module": "auth"}
-        self.store.add_memory("doc_meta", "Contenido", meta)
-        results = self.store.query_memory("Contenido", n_results=1)
-        # query_memory solo devuelve textos, pero verificamos que no crashee
+        self.store.add_memory("doc_meta", "Content", meta)
+        results = self.store.query_memory("Content", n_results=1)
+        # query_memory only returns text, but we verify it does not crash
         docs = results.get("documents", [[]])[0]
         assert len(docs) == 1
+
+    def test_fts5_search_with_prefix_and_punctuation(self):
+        self.store.add_memory("doc_sec", "Zero-Trust architecture with Next.js and Supabase RLS", {"type": "architecture"})
+        # Query with punctuation and prefix
+        results = self.store.query_memory("Zero-Trust / Next.js", n_results=1)
+        docs = results.get("documents", [[]])[0]
+        assert len(docs) == 1
+        assert "Zero-Trust" in docs[0]
+

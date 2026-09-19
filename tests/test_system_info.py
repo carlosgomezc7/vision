@@ -25,6 +25,6 @@ class TestSystemInfo:
 
     def test_format_system_info_report(self):
         report = format_system_info_report()
-        assert "Sistema Detectado" in report
+        assert "Detected System" in report
         assert "Kernel" in report
         assert "Python" in report

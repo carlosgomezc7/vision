@@ -1,20 +1,27 @@
 import json
 import math
+import re
 from src.logger import get_logger
 
 logger = get_logger("vision.tools.ux_design")
 
+HEX_COLOR_PATTERN = re.compile(r"^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
+
 
 def hex_to_relative_luminance(hex_color: str) -> float:
-    """Calcula la luminancia relativa según especificación WCAG 2.2."""
-    try:
-        hex_color = hex_color.lstrip('#')
-        if len(hex_color) == 3:
-            hex_color = ''.join([c*2 for c in hex_color])
+    """Calculates relative luminance according to the WCAG 2.2 specification."""
+    if not isinstance(hex_color, str) or not HEX_COLOR_PATTERN.match(hex_color.strip()):
+        raise ValueError(f"Invalid hex color format: '{hex_color}'. Expected '#RGB' or '#RRGGBB'.")
 
-        r = int(hex_color[0:2], 16) / 255.0
-        g = int(hex_color[2:4], 16) / 255.0
-        b = int(hex_color[4:6], 16) / 255.0
+    try:
+        clean_hex = hex_color.strip().lstrip('#')
+        if len(clean_hex) == 3:
+            clean_hex = ''.join([c*2 for c in clean_hex])
+
+        r = int(clean_hex[0:2], 16) / 255.0
+        g = int(clean_hex[2:4], 16) / 255.0
+        b = int(clean_hex[4:6], 16) / 255.0
+
 
         def adjust(c):
             return c / 12.92 if c <= 0.04045 else math.pow((c + 0.055) / 1.055, 2.4)
@@ -25,15 +32,15 @@ def hex_to_relative_luminance(hex_color: str) -> float:
 
         return 0.2126 * r_adj + 0.7152 * g_adj + 0.0722 * b_adj
     except Exception as e:
-        logger.error("Error calculando luminancia para %s: %s", hex_color, e, exc_info=True)
+        logger.error("Error calculating luminance for %s: %s", hex_color, e, exc_info=True)
         raise
 
 
 def validate_wcag_contrast(fg_hex: str, bg_hex: str, is_large_text: bool = False) -> str:
     """
-    Validador estricto de accesibilidad WCAG 2.2 Nivel AA.
-    Calcula el contraste exacto sin redondear hacia arriba.
-    Mínimo: 4.5:1 para texto normal, 3.0:1 para texto grande (>=18pt o >=14pt bold).
+    Strict WCAG 2.2 Level AA accessibility validator.
+    Calculates the exact contrast without rounding up.
+    Minimum: 4.5:1 for normal text, 3.0:1 for large text (>=18pt or >=14pt bold).
     """
     try:
         l1 = hex_to_relative_luminance(fg_hex)
@@ -59,23 +66,23 @@ def validate_wcag_contrast(fg_hex: str, bg_hex: str, is_large_text: bool = False
             "passes_wcag_aaa": passes_aaa,
             "status": "PASS" if passes_aa else "FAIL",
             "notes": (
-                f"Cumple con WCAG 2.2 AA (Requerido {required_ratio}:1)."
+                f"Passes WCAG 2.2 AA (Required {required_ratio}:1)."
                 if passes_aa
-                else f"NO cumple con WCAG 2.2 AA. Requiere al menos {required_ratio}:1 pero obtuvo {ratio:.4f}:1."
+                else f"Does NOT pass WCAG 2.2 AA. Requires at least {required_ratio}:1 but got {ratio:.4f}:1."
             )
         }
 
         logger.info("WCAG check: %s vs %s -> %s", fg_hex, bg_hex, result["status"])
         return json.dumps(result, indent=2, ensure_ascii=False)
     except Exception as e:
-        logger.error("Error validando contraste %s vs %s: %s", fg_hex, bg_hex, e, exc_info=True)
+        logger.error("Error validating contrast %s vs %s: %s", fg_hex, bg_hex, e, exc_info=True)
         raise
 
 
 def generate_w3c_design_tokens(color_palette: dict, typography: dict = None, spacing: dict = None) -> str:
     """
-    Genera tokens de diseño bajo el formato estricto JSON de W3C Design Tokens Community Group (DTCG).
-    Usa la nomenclatura con prefijos $ ($value, $type, $description).
+    Generates design tokens in the strict JSON format of the W3C Design Tokens Community Group (DTCG).
+    Uses the $ prefix naming convention ($value, $type, $description).
     """
     try:
         tokens = {
@@ -88,7 +95,7 @@ def generate_w3c_design_tokens(color_palette: dict, typography: dict = None, spa
             tokens["color"][name] = {
                 "$value": hex_val,
                 "$type": "color",
-                "$description": f"Token de color {name} corporativo CTI Soluciones"
+                "$description": f"Corporate color token {name} - CTI Soluciones"
             }
 
         if typography:
@@ -96,7 +103,7 @@ def generate_w3c_design_tokens(color_palette: dict, typography: dict = None, spa
                 tokens["typography"][name] = {
                     "$value": font_val,
                     "$type": "fontFamily" if "family" in name.lower() else "fontSize",
-                    "$description": f"Token tipográfico {name}"
+                    "$description": f"Typography token {name}"
                 }
 
         if spacing:
@@ -104,35 +111,36 @@ def generate_w3c_design_tokens(color_palette: dict, typography: dict = None, spa
                 tokens["spacing"][name] = {
                     "$value": space_val,
                     "$type": "dimension",
-                    "$description": f"Token de espaciado {name}"
+                    "$description": f"Spacing token {name}"
                 }
 
-        logger.info("Tokens W3C generados: %d colores, %d tipografías, %d espaciados",
+        logger.info("W3C tokens generated: %d colors, %d typography, %d spacing",
                     len(tokens["color"]), len(tokens["typography"]), len(tokens["spacing"]))
         return json.dumps(tokens, indent=2, ensure_ascii=False)
     except Exception as e:
-        logger.error("Error generando tokens W3C: %s", e, exc_info=True)
+        logger.error("Error generating W3C tokens: %s", e, exc_info=True)
         raise
 
 
 def audit_performance_budget(framework: str, estimated_js_kb: float, animations_count: int) -> str:
     """
-    Evalúa el presupuesto de rendimiento contra los Core Web Vitals de Google:
+    Evaluates the performance budget against Google Core Web Vitals:
     - INP (Interaction to Next Paint): < 200 ms
     - LCP (Largest Contentful Paint): < 2.5 s
     - CLS (Cumulative Layout Shift): <= 0.1
     """
     try:
-        inp_risk = "ALTO" if estimated_js_kb > 300 or animations_count > 10 else "BAJO"
-        lcp_risk = "ALTO" if estimated_js_kb > 500 else "OPTIMO"
+        inp_risk = "HIGH" if estimated_js_kb > 300 or animations_count > 10 else "LOW"
+        lcp_risk = "HIGH" if estimated_js_kb > 500 else "OPTIMAL"
 
         recommendations = []
         if estimated_js_kb > 250:
-            recommendations.append("Implementar Code-splitting y Dynamic Imports para mantener JS inicial < 250KB.")
+            recommendations.append("Implement code-splitting and dynamic imports to keep initial JS bundle < 250KB.")
         if animations_count > 5:
-            recommendations.append("Usar 'will-change' y CSS transform/opacity para evitar tareas largas en el hilo principal.")
+            recommendations.append("Use 'will-change' and CSS transform/opacity to prevent long main-thread tasks.")
         if framework.lower() == "next.js":
-            recommendations.append("Utilizar next/font y next/image para optimización automática de LCP y prevención de CLS.")
+            recommendations.append("Use next/font and next/image for automatic LCP optimization and CLS prevention.")
+
 
         budget = {
             "framework": framework,
@@ -150,8 +158,8 @@ def audit_performance_budget(framework: str, estimated_js_kb: float, animations_
             "recommendations": recommendations
         }
 
-        logger.info("Performance audit para %s: INP=%s, LCP=%s", framework, inp_risk, lcp_risk)
+        logger.info("Performance audit for %s: INP=%s, LCP=%s", framework, inp_risk, lcp_risk)
         return json.dumps(budget, indent=2, ensure_ascii=False)
     except Exception as e:
-        logger.error("Error en performance audit: %s", e, exc_info=True)
+        logger.error("Error in performance audit: %s", e, exc_info=True)
         raise

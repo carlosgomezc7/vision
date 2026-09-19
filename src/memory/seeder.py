@@ -6,16 +6,19 @@ from src.logger import get_logger
 logger = get_logger("vision.memory.seeder")
 
 
-def seed_vision_mind():
-    store = VisionMemoryStore()
+def seed_vision_mind(store: VisionMemoryStore = None) -> int:
+    """Reads all markdown files from seed_data and indexes them into the memory store."""
+    if store is None:
+        store = VisionMemoryStore()
+
     seed_dir = str(SEED_DATA_DIR)
-
     if not os.path.exists(seed_dir):
-        logger.warning("Directorio seed_data no encontrado: %s", seed_dir)
-        return
+        logger.warning("seed_data directory not found: %s", seed_dir)
+        return 0
 
-    files = [f for f in os.listdir(seed_dir) if f.endswith(".md")]
+    files = sorted([f for f in os.listdir(seed_dir) if f.endswith(".md")])
 
+    count = 0
     for file_name in files:
         file_path = os.path.join(seed_dir, file_name)
         try:
@@ -28,12 +31,15 @@ def seed_vision_mind():
                 text=content,
                 metadata={"source": file_name, "type": "seed_knowledge"}
             )
-            logger.info("Memoria sembrada e indexada: %s", file_name)
+            count += 1
+            logger.info("Seed memory indexed: %s", file_name)
         except Exception as e:
-            logger.error("Error al sembrar %s: %s", file_name, e, exc_info=True)
+            logger.error("Error seeding %s: %s", file_name, e, exc_info=True)
 
-    logger.info("Sembrado completado. %d archivos procesados.", len(files))
+    logger.info("Seeding complete. %d files processed.", count)
+    return count
+
 
 if __name__ == "__main__":
-    seed_vision_mind()
-    print("¡VISION ha absorbido todo el conocimiento semilla con éxito!")
+    total = seed_vision_mind()
+    print(f"VISION has successfully absorbed {total} seed knowledge documents!")

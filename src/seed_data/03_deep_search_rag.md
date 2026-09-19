@@ -1,9 +1,9 @@
-# Arquitectura de Búsqueda Profunda (Deep Search / RAG)
+# Deep Search Architecture (Deep Search / RAG)
 
-El motor de Deep Search permite a los colaboradores realizar consultas en lenguaje natural sobre los documentos corporativos (PDFs, guías, políticas en Markdown o DOCX).
+The Deep Search engine allows employees to query corporate documents (PDFs, guides, policies in Markdown or DOCX) in natural language.
 
-## Componentes Técnicos
-1. **Pipeline de Ingesta & Chunking:** Extracción de texto de documentos corporativos y división en fragmentos (chunks) optimizados para contexto.
-2. **Embeddings Vectoriales:** Generación de vectores densos usando modelos de lenguaje eficientes.
-3. **Almacenamiento Vectorial:** Supabase con la extensión `pgvector` para consultas híbridas (texto + similitud vectorial).
-4. **Recuperación y Generación (RAG):** Contexto inyectado de forma segura al modelo de lenguaje para garantizar respuestas precisas sin alucinaciones, con referencias directas al documento fuente.
+## Technical Components
+1. **Ingestion & Chunking Pipeline:** Text extraction from corporate documents and division into context-optimized chunks.
+2. **Vector Embeddings:** Generation of dense vectors using efficient language models.
+3. **Vector Storage:** Supabase with the `pgvector` extension for hybrid queries (text + vector similarity).
+4. **Retrieval and Generation (RAG):** Context securely injected into the language model to guarantee accurate responses without hallucinations, with direct references to the source document.

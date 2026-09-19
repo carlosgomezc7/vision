@@ -7,7 +7,7 @@ logger = get_logger("vision.tools.system_info")
 
 
 def get_system_info() -> dict:
-    """Detecta automáticamente el entorno del sistema operativo (Omarch / Arch Linux)."""
+    """Automatically detects the operating system environment (Omarch / Arch Linux)."""
     try:
         os_info = {
             "os_name": "Linux",
@@ -38,27 +38,27 @@ def get_system_info() -> dict:
         if "omarch" in hostname.lower() or "omarch" in os_info["pretty_name"].lower():
             os_info["is_omarch"] = True
 
-        logger.debug("System info detectado: %s", os_info)
+        logger.debug("System info detected: %s", os_info)
         return os_info
     except Exception as e:
-        logger.error("Error al detectar sistema: %s", e, exc_info=True)
+        logger.error("Error detecting system: %s", e, exc_info=True)
         raise
 
 
 def format_system_info_report() -> str:
-    """Devuelve un informe estructurado del sistema operativo detectado."""
+    """Returns a structured report of the detected operating system."""
     try:
         info = get_system_info()
         omarch_tag = " (Omarch / Arch Linux)" if info["is_arch_based"] else ""
         report = (
-            f"🐧 Sistema Detectado: {info['pretty_name']}{omarch_tag}\n"
+            f"🐧 Detected System: {info['pretty_name']}{omarch_tag}\n"
             f"🖥️ Kernel: {info['kernel']} ({info['arch']})\n"
-            f"🐍 Python: {info['python_version']} (Entorno `.venv`)\n"
-            f"📦 Gestor de paquetes base: pacman / yay\n"
-            f"⚙️ Estado: Detección automática activa"
+            f"🐍 Python: {info['python_version']} (Virtual environment `.venv`)\n"
+            f"📦 Base package manager: pacman / yay\n"
+            f"⚙️ Status: Auto-detection active"
         )
-        logger.info("Reporte de sistema generado.")
+        logger.info("System report generated.")
         return report
     except Exception as e:
-        logger.error("Error al formatear reporte de sistema: %s", e, exc_info=True)
-        return f"⚠️ Error al detectar el sistema: {e}"
+        logger.error("Error formatting system report: %s", e, exc_info=True)
+        return f"⚠️ Error detecting system: {e}"

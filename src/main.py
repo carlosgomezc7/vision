@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-# Permitir la ejecución directa (python src/main.py) añadiendo la raíz del proyecto a sys.path
+# Allow direct execution (python src/main.py) by adding the project root to sys.path
 project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
@@ -17,52 +17,60 @@ from src.tools.ux_design_tool import (
     generate_w3c_design_tokens,
     audit_performance_budget,
 )
-from src.tools.issue_tracker import record_issue, list_recorded_issues
+from src.tools.issue_tracker import record_issue, list_recorded_issues, update_issue_status
 from src.tools.system_info import format_system_info_report
+from src.tools.project_specs import create_landing_page_spec, generate_supabase_rls_policies
+from src.tools.discovery_ingest import ingest_discovery_data
+from src.tools.tokens_exporter import export_tokens_to_css, audit_full_palette
+from src.tools.knowledge_tool import ingest_knowledge_document
+from src.tools.devops_tool import get_project_health_status, trigger_git_checkpoint
 from src.logger import setup_logging, get_logger
 from src.config import LOG_FILE
 
-# Configurar logging antes de cualquier otra operación
+# Configure logging before any other operation
 setup_logging(log_file=LOG_FILE)
 logger = get_logger("vision.main")
 
 SYSTEM_INSTRUCTIONS = """
 VISION - CTI Soluciones (MCP Context)
 =====================================
-Servidor de Inteligencia y Arquitectura para el diseño y desarrollo de Intranets Empresariales B2B y Portales Corporativos a la Medida.
+Intelligence and Architecture Server for designing and developing B2B Enterprise Intranets and Custom Corporate Portals.
 
-Principios Fundamentales y Contexto de Negocio:
-1. Modelo de Negocio: Desarrollo de intranets corporativas con motores de Búsqueda Profunda (Deep Search/RAG), reducción de tiempos operativos y seguridad Zero Trust.
-2. Arquitectura & Seguridad: Integración de RBAC, SSO (Azure AD / Google Workspace), arquitectura híbrida/cloud (AWS / On-Premise) y SQL Server.
-3. Diseño & UX / Accesibilidad: Cumplimiento estricto de WCAG 2.2 AA (contraste mínimo 4.5:1 texto normal, 3.0:1 texto grande), escalado a 200% sin scroll horizontal, navegación por teclado 100% y tokens de diseño W3C DTCG.
-4. Protocolo de Inicio de Proyecto: Detección automática de intenciones de nuevo proyecto, flujo de elicitación (Cliente, Ruta, Git, Supabase, Branding) y reutilización de componentes estándar.
-5. Memoria Sintética: Consulta y registro continuo de lecciones aprendidas y blueprints en la base de conocimiento SQLite/Vectorial.
+Core Principles and Business Context:
+1. Business Model: Development of corporate intranets with Deep Search engines (Deep Search/RAG), reduction of operational time, and Zero Trust security.
+2. Architecture & Security: Integration of RBAC, SSO (Azure AD / Google Workspace), hybrid/cloud architecture (AWS / On-Premise), and SQL Server / Supabase PostgreSQL.
+3. Design & UX / Accessibility: Strict WCAG 2.2 AA compliance (minimum contrast 4.5:1 normal text, 3.0:1 large text), 200% scaling without horizontal scroll, 100% keyboard navigation, and W3C DTCG design tokens.
+4. Project Start Protocol: Automatic detection of new project intents, strict bifurcation (B2B Intranet vs Landing Page), elicitation flow, and reuse of standard components.
+5. Synthetic Memory: Continuous querying and recording of lessons learned and blueprints in SQLite with FTS5 BM25 search.
 """
 
-# Inicializar FastMCP con instrucciones globales del sistema
+# Initialize FastMCP with global system instructions
 mcp = FastMCP("VISION - CTI Soluciones", instructions=SYSTEM_INSTRUCTIONS)
-
-# Garantizar el sembrado automático de memoria al iniciar
-try:
-    seed_vision_mind()
-except Exception as e:
-    logger.error("Error al sembrar memoria: %s", e, exc_info=True)
 
 store = VisionMemoryStore()
 
+# Ensure automatic memory seeding on startup
+try:
+    seed_count = seed_vision_mind(store=store)
+    logger.info("Memory initialized with %d seed knowledge documents.", seed_count)
+except Exception as e:
+    logger.error("Error seeding memory: %s", e, exc_info=True)
+
 
 def _safe_tool_call(func, *args, **kwargs) -> str:
-    """Wrapper centralizado para capturar excepciones en herramientas MCP."""
+    """Centralized wrapper to capture exceptions in MCP tools."""
     try:
         return func(*args, **kwargs)
     except Exception as e:
-        logger.error("Error en herramienta MCP %s: %s", func.__name__, e, exc_info=True)
-        return f"⚠️ Error interno en la herramienta '{func.__name__}': {e}"
+        logger.error("Error in MCP tool %s: %s", func.__name__, e, exc_info=True)
+        return f"⚠️ Internal error in tool '{func.__name__}': {e}"
 
+
+# ─── Knowledge & Deep Search Tools ──────────────────────────────────────────
 
 @mcp.tool()
 def query_vision_memory(query: str) -> str:
-    """Busca en la memoria sintética y base de conocimiento de VISION."""
+    """Searches the synthetic memory and knowledge base of VISION using SQLite FTS5 BM25 ranking."""
     return _safe_tool_call(_query_vision_memory_impl, query)
 
 
@@ -70,75 +78,138 @@ def _query_vision_memory_impl(query: str) -> str:
     results = store.query_memory(query, n_results=3)
     docs = results.get("documents", [[]])[0]
     if not docs:
-        return "No se encontraron memorias relevantes."
+        return "No relevant memories found."
     return "\n\n".join(docs)
 
 
 @mcp.tool()
-def create_intranet_prd(company_name: str, employee_count: int, modules: list, sso_provider: str) -> str:
-    """Genera el PRD corporativo para una Intranet B2B."""
-    return _safe_tool_call(generate_intranet_prd, company_name, employee_count, modules, sso_provider)
+def ingest_custom_document(title: str, category: str, content: str, tags: list = None) -> str:
+    """Dynamically ingests and indexes external documents, client policies, or manuals into VISION memory."""
+    return _safe_tool_call(ingest_knowledge_document, title, category, content, tags, store=store)
 
 
 @mcp.tool()
 def consult_architecture(topic: str) -> str:
-    """Consulta los blueprints técnicos y de Deep Search en la memoria."""
-    return _safe_tool_call(get_architecture_blueprint, topic)
+    """Queries technical blueprints and Deep Search guides in memory."""
+    return _safe_tool_call(get_architecture_blueprint, topic, store=store)
 
 
 @mcp.tool()
 def log_retrospective(project_name: str, lesson: str) -> str:
-    """Registra un aprendizaje o retrospectiva del proyecto."""
-    return _safe_tool_call(record_lesson_learned, project_name, lesson)
+    """Records a lesson learned or key decision for a project in long-term memory."""
+    return _safe_tool_call(record_lesson_learned, project_name, lesson, store=store)
+
+
+# ─── Project Specification & Discovery Tools ────────────────────────────────
+
+@mcp.tool()
+def ingest_client_discovery(payload: dict) -> str:
+    """Ingests and validates the client discovery payload from web_discovery into VISION memory."""
+    return _safe_tool_call(ingest_discovery_data, payload, store=store)
 
 
 @mcp.tool()
+def create_intranet_prd(company_name: str, employee_count: int, modules: list, sso_provider: str) -> str:
+    """Generates the corporate PRD for a B2B Intranet (Bifurcation B)."""
+    return _safe_tool_call(generate_intranet_prd, company_name, employee_count, modules, sso_provider, store=store)
+
+
+@mcp.tool()
+def create_landing_page_specification(company_name: str, sections: list, cta_goal: str, style_adjectives: list = None) -> str:
+    """Generates a formal specification for a public Landing Page (Bifurcation A - no database/auth)."""
+    return _safe_tool_call(create_landing_page_spec, company_name, sections, cta_goal, style_adjectives, store=store)
+
+
+@mcp.tool()
+def generate_supabase_rls_schema(company_name: str, modules: list, roles: list = None) -> str:
+    """Generates PostgreSQL SQL schema with Zero Trust Row Level Security (RLS) policies for Supabase."""
+    return _safe_tool_call(generate_supabase_rls_policies, company_name, modules, roles)
+
+
+# ─── UX, UI & Design Token Tools ────────────────────────────────────────────
+
+@mcp.tool()
 def check_wcag_accessibility(fg_hex: str, bg_hex: str, is_large_text: bool = False) -> str:
-    """Valida el contraste WCAG 2.2 Nivel AA estricto (4.5:1 texto normal, 3.0:1 texto grande) sin redondear."""
+    """Validates strict WCAG 2.2 Level AA contrast (4.5:1 normal text, 3.0:1 large text) without rounding."""
     return _safe_tool_call(validate_wcag_contrast, fg_hex, bg_hex, is_large_text)
 
 
 @mcp.tool()
 def generate_design_tokens_w3c(color_palette: dict, typography: dict = None, spacing: dict = None) -> str:
-    """Genera tokens de diseño bajo especificación estricta W3C DTCG ($value, $type, $description)."""
+    """Generates design tokens under the strict W3C DTCG specification ($value, $type, $description)."""
     return _safe_tool_call(generate_w3c_design_tokens, color_palette, typography, spacing)
 
 
 @mcp.tool()
-def check_performance_budget(framework: str, estimated_js_kb: float, animations_count: int) -> str:
-    """Audita el presupuesto de rendimiento para garantizar Core Web Vitals (INP < 200ms, LCP < 2.5s, CLS <= 0.1)."""
-    return _safe_tool_call(audit_performance_budget, framework, estimated_js_kb, animations_count)
+def export_tokens_to_stylesheet(tokens_input: dict, format_type: str = "css_variables") -> str:
+    """Converts W3C DTCG design tokens to CSS Custom Properties (:root) or Tailwind CSS config."""
+    return _safe_tool_call(export_tokens_to_css, tokens_input, format_type)
 
 
 @mcp.tool()
-def log_incident_issue(title: str, category: str, description_es: str, description_en: str, solution: str = "", status: str = "Solucionado") -> str:
-    """Registra una incidencia o issue en el sistema de seguimiento de VISION (SQLite + ISSUES.md)."""
+def audit_theme_palette(palette: dict) -> str:
+    """Audits a complete corporate theme palette against WCAG 2.2 AA cross-pairings."""
+    return _safe_tool_call(audit_full_palette, palette)
+
+
+@mcp.tool()
+def check_performance_budget(framework: str, estimated_js_kb: float, animations_count: int) -> str:
+    """Audits the performance budget to ensure Core Web Vitals (INP < 200ms, LCP < 2.5s, CLS <= 0.1)."""
+    return _safe_tool_call(audit_performance_budget, framework, estimated_js_kb, animations_count)
+
+
+# ─── Issue Tracking & DevOps Tools ──────────────────────────────────────────
+
+@mcp.tool()
+def log_incident_issue(title: str, category: str, description_es: str, description_en: str, solution: str = "", status: str = "Resolved") -> str:
+    """Records an incident or issue in the VISION tracking system (SQLite + ISSUES.md)."""
     return _safe_tool_call(record_issue, title, category, description_es, description_en, solution, status)
 
 
 @mcp.tool()
-def get_issues_log() -> str:
-    """Consulta el historial completo de incidencias registradas en la base de datos de VISION."""
-    return _safe_tool_call(list_recorded_issues)
+def update_recorded_issue(issue_number: int, new_status: str, solution: str = "") -> str:
+    """Updates status and solution for an existing issue in SQLite."""
+    return _safe_tool_call(update_issue_status, issue_number, new_status, solution)
+
+
+@mcp.tool()
+def get_issues_log(category: str = None, status: str = None, limit: int = 50, offset: int = 0) -> str:
+    """Retrieves recorded incidents from the VISION database with optional filtering and pagination."""
+    return _safe_tool_call(list_recorded_issues, category, status, limit, offset)
 
 
 @mcp.tool()
 def detect_system_environment() -> str:
-    """Detecta automáticamente el entorno del sistema operativo (Omarch / Arch Linux), kernel y estado de Python."""
+    """Automatically detects the operating system environment (Omarch / Arch Linux), kernel, and Python status."""
     return _safe_tool_call(format_system_info_report)
 
 
+@mcp.tool()
+def check_project_health() -> str:
+    """Performs a comprehensive diagnostic report of VISION database, knowledge base, issues, and Git."""
+    return _safe_tool_call(get_project_health_status, store=store)
+
+
+@mcp.tool()
+def make_git_checkpoint(message: str) -> str:
+    """Creates an on-demand conventional Git checkpoint commit for the current project state."""
+    return _safe_tool_call(trigger_git_checkpoint, message)
+
+
+# ─── Resources & Prompts ───────────────────────────────────────────────────
+
 @mcp.resource("config://system_context")
 def get_system_context_resource() -> str:
-    """Recurso MCP que expone el contexto y directrices del sistema VISION - CTI Soluciones."""
+    """MCP resource that exposes the VISION - CTI Soluciones system context and guidelines."""
     return SYSTEM_INSTRUCTIONS
 
 
 @mcp.prompt()
 def vision_system_prompt() -> str:
-    """Prompt oficial con el contexto estratégico de VISION para guiar la interacción."""
-    return f"Eres VISION, el copilot de CTI Soluciones. Directrices del sistema:\n\n{SYSTEM_INSTRUCTIONS}"
+    """Official prompt with VISION's strategic context to guide interactions."""
+    return f"You are VISION, the CTI Soluciones copilot. System guidelines:\n\n{SYSTEM_INSTRUCTIONS}"
+
 
 if __name__ == "__main__":
-    logger.info("🚀 VISION MCP Server iniciado y listo para trabajar.")
+    logger.info("🚀 VISION MCP Server started and ready.")
     mcp.run()

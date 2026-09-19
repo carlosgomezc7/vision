@@ -1,10 +1,6 @@
 # ==============================================================================
-# Dockerfile — VISION MCP Server
-# CTI Soluciones — Carlos Gómez
-# ==============================================================================
-# Multi-stage build: installs heavy ML deps in a builder stage, then copies
-# only the runtime artifacts into a slim final image.
-# ==============================================================================
+# Dockerfile — VISION MCP Server#
+# Carlos Gómez#
 
 # ── Stage 1: Builder ─────────────────────────────────────────────────────────
 FROM python:3.12-slim AS builder
@@ -14,9 +10,9 @@ WORKDIR /build
 # System deps required for building native extensions (chromadb, numpy, etc.)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        build-essential \
-        gcc \
-        g++ \
+    build-essential \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

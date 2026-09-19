@@ -1,55 +1,55 @@
-# Blueprint: Login para Intranet B2B — Setup Base
+# Blueprint: B2B Intranet Login — Base Setup
 
-Este documento describe los pasos exactos para crear el módulo de login de cualquier Intranet B2B de CTI Soluciones. La funcionalidad es estándar y reutilizable; solo el diseño visual se personaliza por cliente.
+This document describes the exact steps to create the login module for any B2B Intranet by CTI Soluciones. The functionality is standard and reusable; only the visual design is customized per client.
 
-## 1. Inicialización del Proyecto
+## 1. Project Initialization
 
 ```bash
-# Crear proyecto Next.js con App Router + TypeScript + Tailwind
+# Create Next.js project with App Router + TypeScript + Tailwind
 npx -y create-next-app@latest ./ --typescript --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --yes
 
-# Inicializar Shadcn UI
+# Initialize Shadcn UI
 npx -y shadcn@latest init --yes --defaults --force
 
-# Instalar Supabase
+# Install Supabase
 npm install @supabase/supabase-js @supabase/ssr
 ```
 
-## 2. Estructura de Archivos (estándar para todos los proyectos)
+## 2. File Structure (standard for all projects)
 
 ```
 intranet/
-├── .env.local                    # Credenciales Supabase (por proyecto)
-├── .env.local.example            # Template sin credenciales
+├── .env.local                    # Supabase credentials (per project)
+├── .env.local.example            # Template without credentials
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx            # Layout raíz (metadata por cliente)
-│   │   ├── page.tsx              # Redirect según auth
-│   │   ├── globals.css           # 🎨 PERSONALIZABLE por cliente
+│   │   ├── layout.tsx            # Root layout (metadata per client)
+│   │   ├── page.tsx              # Redirect based on auth
+│   │   ├── globals.css           # 🎨 CUSTOMIZABLE per client
 │   │   ├── login/
-│   │   │   ├── page.tsx          # 🎨 PERSONALIZABLE (diseño visual)
-│   │   │   └── actions.ts       # ✅ ESTÁNDAR (no modificar)
+│   │   │   ├── page.tsx          # 🎨 CUSTOMIZABLE (visual design)
+│   │   │   └── actions.ts       # ✅ STANDARD (do not modify)
 │   │   └── dashboard/
-│   │       └── page.tsx          # 🎨 PERSONALIZABLE
+│   │       └── page.tsx          # 🎨 CUSTOMIZABLE
 │   ├── lib/
 │   │   └── supabase/
-│   │       ├── client.ts         # ✅ ESTÁNDAR (no modificar)
-│   │       ├── server.ts         # ✅ ESTÁNDAR (no modificar)
-│   │       └── middleware.ts     # ✅ ESTÁNDAR (no modificar)
-│   └── middleware.ts             # ✅ ESTÁNDAR (no modificar)
+│   │       ├── client.ts         # ✅ STANDARD (do not modify)
+│   │       ├── server.ts         # ✅ STANDARD (do not modify)
+│   │       └── middleware.ts     # ✅ STANDARD (do not modify)
+│   └── middleware.ts             # ✅ STANDARD (do not modify)
 ```
 
-## 3. Variables de Entorno
+## 3. Environment Variables
 
-Archivo `.env.local` (credenciales únicas por proyecto Supabase):
+File `.env.local` (unique credentials per Supabase project):
 ```
-NEXT_PUBLIC_SUPABASE_URL=<url-del-proyecto-supabase>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key-del-proyecto-supabase>
+NEXT_PUBLIC_SUPABASE_URL=<supabase-project-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase-anon-key>
 ```
 
-Se obtienen desde: Supabase Dashboard → Settings → API.
+Obtained from: Supabase Dashboard → Settings → API.
 
-## 4. Requisito en Supabase
+## 4. Supabase Requirement
 
-Habilitar el proveedor **Email** en: Authentication → Providers → Email.
-A futuro se pueden agregar SSO (Microsoft 365, Google Workspace, Okta) sin modificar la estructura base.
+Enable the **Email** provider at: Authentication → Providers → Email.
+SSO providers (Microsoft 365, Google Workspace, Okta) can be added in the future without modifying the base structure.

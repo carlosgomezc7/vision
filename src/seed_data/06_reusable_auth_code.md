@@ -1,10 +1,10 @@
-# Código Estándar Reutilizable — Autenticación Supabase
+# Standard Reusable Code — Supabase Authentication
 
-Estos archivos son IDÉNTICOS en todos los proyectos de Intranet. NO se modifican por cliente. Solo se cambian las credenciales en `.env.local`.
+These files are IDENTICAL across all Intranet projects. They are NOT modified per client. Only credentials in `.env.local` change.
 
 ---
 
-## Archivo: src/lib/supabase/client.ts (Browser Client)
+## File: src/lib/supabase/client.ts (Browser Client)
 
 ```typescript
 import { createBrowserClient } from "@supabase/ssr";
@@ -19,7 +19,7 @@ export function createClient() {
 
 ---
 
-## Archivo: src/lib/supabase/server.ts (Server Client)
+## File: src/lib/supabase/server.ts (Server Client)
 
 ```typescript
 import { createServerClient } from "@supabase/ssr";
@@ -42,7 +42,7 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // Ignorar en Server Components — el middleware refresca la sesión.
+            // Ignore in Server Components — middleware refreshes the session.
           }
         },
       },
@@ -53,7 +53,7 @@ export async function createClient() {
 
 ---
 
-## Archivo: src/lib/supabase/middleware.ts (Session Refresh + Auth Guard)
+## File: src/lib/supabase/middleware.ts (Session Refresh + Auth Guard)
 
 ```typescript
 import { createServerClient } from "@supabase/ssr";
@@ -101,7 +101,7 @@ export async function updateSession(request: NextRequest) {
 
 ---
 
-## Archivo: src/middleware.ts (Entry Point)
+## File: src/middleware.ts (Entry Point)
 
 ```typescript
 import { type NextRequest } from "next/server";
@@ -120,7 +120,7 @@ export const config = {
 
 ---
 
-## Archivo: src/app/login/actions.ts (Server Actions)
+## File: src/app/login/actions.ts (Server Actions)
 
 ```typescript
 "use server";
@@ -154,7 +154,7 @@ export async function signup(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
   revalidatePath("/", "layout");
-  redirect("/login?message=Revisa tu correo para confirmar tu cuenta");
+  redirect("/login?message=Check your email to confirm your account");
 }
 
 export async function logout() {
@@ -167,7 +167,7 @@ export async function logout() {
 
 ---
 
-## Archivo: src/app/page.tsx (Redirect Raíz)
+## File: src/app/page.tsx (Root Redirect)
 
 ```typescript
 import { redirect } from "next/navigation";
