@@ -9,7 +9,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.memory.vector_store import VisionMemoryStore
-from src.tools.project_specs import create_landing_page_spec, generate_supabase_rls_policies
+from src.tools.project_specs import create_landing_page_spec
 
 
 class TestProjectSpecs:
@@ -25,35 +25,39 @@ class TestProjectSpecs:
                 os.remove(p)
         os.rmdir(self.tmp_dir)
 
-    def test_create_landing_page_spec(self):
+    def test_create_landing_page_spec_complete(self):
         spec_str = create_landing_page_spec(
             company_name="Grupo Alfa",
-            sections=["Hero", "Servicios", "Nosotros", "Contacto"],
+            sections=["Hero", "Servicios", "Nosotros", "Testimonios", "Contacto"],
             cta_goal="Agendar una auditoría gratuita",
-            style_adjectives=["moderno", "seguro"],
+            style_adjectives=["moderno", "limpio", "elegante"],
+            palette_hex=["#0F172A", "#3B82F6", "#FFFFFF"],
+            typography=["Inter", "sans-serif"],
+            contact_channels=["WhatsApp", "Formulario Web"],
             store=self.store
         )
         spec = json.loads(spec_str)
         assert spec["client"] == "Grupo Alfa"
-        assert "Bifurcation A" in spec["architecture_branch"]
-        assert "src/components/landing/Hero.tsx" in spec["component_structure"]["Hero"]["file"]
+        assert "Landing Page" in spec["project_type"]
+        assert "Header.tsx" in spec["component_structure"]["Header"]["file"]
+        assert "Hero.tsx" in spec["component_structure"]["Hero"]["file"]
+        assert "Footer.tsx" in spec["component_structure"]["Footer"]["file"]
         assert spec["primary_cta_goal"] == "Agendar una auditoría gratuita"
+        assert spec["color_palette_hex"] == ["#0F172A", "#3B82F6", "#FFFFFF"]
+        assert "Cero dependencias de autenticación" in spec["rules"][4]
 
         # Verify saved in memory store
-        mem = self.store.query_memory("Grupo Alfa", n_results=1)
+        mem = self.store.query_memory("Grupo Alfa Landing", n_results=1)
         docs = mem.get("documents", [[]])[0]
         assert len(docs) == 1
         assert "Grupo Alfa" in docs[0]
 
-    def test_generate_supabase_rls_policies(self):
-        sql = generate_supabase_rls_policies(
-            company_name="Acme Corp",
-            modules=["announcements", "tickets"],
-            roles=["admin", "lead", "employee"]
+    def test_create_landing_page_spec_defaults(self):
+        spec_str = create_landing_page_spec(
+            company_name="Pastelería Dulce",
+            store=self.store
         )
-        assert "user_role AS ENUM" in sql
-        assert "public.profiles" in sql
-        assert "ENABLE ROW LEVEL SECURITY" in sql
-        assert "public.intranet_announcements" in sql
-        assert "public.intranet_tickets" in sql
-        assert "Authenticated employees can read" in sql
+        spec = json.loads(spec_str)
+        assert spec["client"] == "Pastelería Dulce"
+        assert "Hero" in spec["required_sections"]
+        assert len(spec["component_structure"]) >= 4

@@ -9,7 +9,6 @@ if str(project_root) not in sys.path:
 from fastmcp import FastMCP
 from src.memory.vector_store import VisionMemoryStore
 from src.memory.seeder import seed_vision_mind
-from src.tools.prd_intranet import generate_intranet_prd
 from src.tools.architecture_tool import get_architecture_blueprint
 from src.tools.retrospect_tool import record_lesson_learned
 from src.tools.ux_design_tool import (
@@ -19,8 +18,8 @@ from src.tools.ux_design_tool import (
 )
 from src.tools.issue_tracker import record_issue, list_recorded_issues, update_issue_status
 from src.tools.system_info import format_system_info_report
-from src.tools.project_specs import create_landing_page_spec, generate_supabase_rls_policies
-from src.tools.discovery_ingest import ingest_discovery_data
+from src.tools.project_specs import create_landing_page_spec
+from src.tools.discovery_ingest import ingest_discovery_data, audit_client_readiness, get_client_intake_guide
 from src.tools.tokens_exporter import export_tokens_to_css, audit_full_palette
 from src.tools.knowledge_tool import ingest_knowledge_document
 from src.tools.devops_tool import get_project_health_status, trigger_git_checkpoint
@@ -34,14 +33,14 @@ logger = get_logger("vision.main")
 SYSTEM_INSTRUCTIONS = """
 VISION - CTI Soluciones (MCP Context)
 =====================================
-Intelligence and Architecture Server for designing and developing B2B Enterprise Intranets and Custom Corporate Portals.
+Intelligence and Architecture Server for designing and developing beautiful, custom, high-converting Landing Pages and Corporate Web Portals.
 
 Core Principles and Business Context:
-1. Business Model: Development of corporate intranets with Deep Search engines (Deep Search/RAG), reduction of operational time, and Zero Trust security.
-2. Architecture & Security: Integration of RBAC, SSO (Azure AD / Google Workspace), hybrid/cloud architecture (AWS / On-Premise), and SQL Server / Supabase PostgreSQL.
-3. Design & UX / Accessibility: Strict WCAG 2.2 AA compliance (minimum contrast 4.5:1 normal text, 3.0:1 large text), 200% scaling without horizontal scroll, 100% keyboard navigation, and W3C DTCG design tokens.
-4. Project Start Protocol: Automatic detection of new project intents, strict bifurcation (B2B Intranet vs Landing Page), elicitation flow, and reuse of standard components.
-5. Synthetic Memory: Continuous querying and recording of lessons learned and blueprints in SQLite with FTS5 BM25 search.
+1. Client-First Listening: Understanding the client's business, value proposition, preferred visual style, and direct conversion goal (CTA) without technical friction.
+2. Readiness-Driven Development: Evaluating discovery briefs with audit_client_readiness (0-100% score) before writing code to eliminate guesswork.
+3. Modular Architecture: Next.js App Router static pages composed of cleanly decoupled components under src/components/landing/* (Header, Hero, Services, About, Testimonials, Contact, Footer).
+4. Visual Design & Accessibility: Strict WCAG 2.2 AA compliance (minimum contrast 4.5:1 normal text, 3.0:1 large text), 200% zoom without horizontal scroll, 100% keyboard navigation, and W3C DTCG design tokens.
+5. Synthetic Memory: Continuous querying and recording of client preferences, design tokens, lessons learned, and blueprints in SQLite with FTS5 BM25 search.
 """
 
 # Initialize FastMCP with global system instructions
@@ -66,7 +65,7 @@ def _safe_tool_call(func, *args, **kwargs) -> str:
         return f"⚠️ Internal error in tool '{func.__name__}': {e}"
 
 
-# ─── Knowledge & Deep Search Tools ──────────────────────────────────────────
+# ─── Knowledge & Memory Tools ───────────────────────────────────────────────
 
 @mcp.tool()
 def query_vision_memory(query: str) -> str:
@@ -90,7 +89,7 @@ def ingest_custom_document(title: str, category: str, content: str, tags: list =
 
 @mcp.tool()
 def consult_architecture(topic: str) -> str:
-    """Queries technical blueprints and Deep Search guides in memory."""
+    """Queries technical blueprints and landing page architectural guides in memory."""
     return _safe_tool_call(get_architecture_blueprint, topic, store=store)
 
 
@@ -100,7 +99,19 @@ def log_retrospective(project_name: str, lesson: str) -> str:
     return _safe_tool_call(record_lesson_learned, project_name, lesson, store=store)
 
 
-# ─── Project Specification & Discovery Tools ────────────────────────────────
+# ─── Client Discovery & Landing Page Specification Tools ───────────────────
+
+@mcp.tool()
+def get_client_listening_guide(focus_area: str = "all") -> str:
+    """Returns the conversational listening guide in Spanish for client meetings, mapping questions to VISION repo tools."""
+    return _safe_tool_call(get_client_intake_guide, focus_area)
+
+
+@mcp.tool()
+def audit_client_readiness_score(payload: dict) -> str:
+    """Audits client discovery data, returns readiness score (0-100%), missing fields for repo, and next client questions in Spanish."""
+    return _safe_tool_call(audit_client_readiness, payload, store=store)
+
 
 @mcp.tool()
 def ingest_client_discovery(payload: dict) -> str:
@@ -109,21 +120,27 @@ def ingest_client_discovery(payload: dict) -> str:
 
 
 @mcp.tool()
-def create_intranet_prd(company_name: str, employee_count: int, modules: list, sso_provider: str) -> str:
-    """Generates the corporate PRD for a B2B Intranet (Bifurcation B)."""
-    return _safe_tool_call(generate_intranet_prd, company_name, employee_count, modules, sso_provider, store=store)
-
-
-@mcp.tool()
-def create_landing_page_specification(company_name: str, sections: list, cta_goal: str, style_adjectives: list = None) -> str:
-    """Generates a formal specification for a public Landing Page (Bifurcation A - no database/auth)."""
-    return _safe_tool_call(create_landing_page_spec, company_name, sections, cta_goal, style_adjectives, store=store)
-
-
-@mcp.tool()
-def generate_supabase_rls_schema(company_name: str, modules: list, roles: list = None) -> str:
-    """Generates PostgreSQL SQL schema with Zero Trust Row Level Security (RLS) policies for Supabase."""
-    return _safe_tool_call(generate_supabase_rls_policies, company_name, modules, roles)
+def create_landing_page_specification(
+    company_name: str,
+    sections: list = None,
+    cta_goal: str = "Contactar por WhatsApp o Formulario",
+    style_adjectives: list = None,
+    palette_hex: list = None,
+    typography: list = None,
+    contact_channels: list = None,
+) -> str:
+    """Generates a formal modular specification for a beautiful, custom, accessible Landing Page (Next.js + Tailwind + shadcn)."""
+    return _safe_tool_call(
+        create_landing_page_spec,
+        company_name=company_name,
+        sections=sections,
+        cta_goal=cta_goal,
+        style_adjectives=style_adjectives,
+        palette_hex=palette_hex,
+        typography=typography,
+        contact_channels=contact_channels,
+        store=store,
+    )
 
 
 # ─── UX, UI & Design Token Tools ────────────────────────────────────────────
@@ -207,7 +224,7 @@ def get_system_context_resource() -> str:
 @mcp.prompt()
 def vision_system_prompt() -> str:
     """Official prompt with VISION's strategic context to guide interactions."""
-    return f"You are VISION, the CTI Soluciones copilot. System guidelines:\n\n{SYSTEM_INSTRUCTIONS}"
+    return f"You are VISION, the CTI Soluciones copilot for creating custom, beautiful Landing Pages. System guidelines:\n\n{SYSTEM_INSTRUCTIONS}"
 
 
 if __name__ == "__main__":

@@ -24,19 +24,19 @@ Esto funciona con pocos documentos (~13 seeds), pero **no escala** cuando la mem
 Un **embedding** es una representación numérica del *significado* de un texto. En lugar de comparar palabras, se comparan vectores de números que capturan conceptos:
 
 ```
-"seguridad de la intranet"  →  [0.82, -0.15, 0.44, ...]
-"Zero Trust authentication" →  [0.79, -0.18, 0.41, ...]   ← Vectores cercanos = mismo tema
+"diseño de landing page"    →  [0.82, -0.15, 0.44, ...]
+"Hero section visual style" →  [0.79, -0.18, 0.41, ...]   ← Vectores cercanos = mismo tema
 "receta de cocina"          →  [0.03, 0.91, -0.67, ...]   ← Vector lejano = tema diferente
 ```
 
 ### ¿Por qué importa para VISION?
 
 | Escenario | Sin embeddings | Con embeddings |
-|-----------|:-:|:-:|
-| Buscar `"proteger rutas del dashboard"` cuando el doc dice `"middleware auth guard"` | ❌ | ✅ |
+|---|:-:|:-:|
+| Buscar `"estilo visual minimalista"` cuando el doc dice `"clean sans-serif UI"` | ❌ | ✅ |
 | Buscar en español y encontrar docs en inglés | ❌ | ✅ |
-| Buscar `"login corporativo"` y encontrar docs sobre `"autenticación SSO"` | ❌ | ✅ |
-| 13 documentos en memoria | ⚠️ Funciona OK | ✅ |
+| Buscar `"botón de contacto rápido"` y encontrar docs sobre `"WhatsApp CTA floating"` | ❌ | ✅ |
+| 12 documentos en memoria | ⚠️ Funciona OK | ✅ |
 | 50+ documentos (5+ clientes) | ❌ Resultados irrelevantes | ✅ Preciso |
 | 100+ documentos (producción) | ❌ Inútil | ✅ Sigue preciso |
 

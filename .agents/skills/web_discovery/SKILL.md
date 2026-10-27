@@ -52,10 +52,10 @@ Conducir la entrevista formulando las siguientes preguntas mediante `ask_questio
 | 5  | ¿Quién es el público objetivo? (demografía, rol, necesidades)            | `target_audience`       |
 
 **Regla de profundidad:** Si la respuesta a `primary_goal` es vaga (ej: "tener presencia web"), reformular con opciones concretas:
-- Generar leads / contactos
+- Generar leads / contactos (formulario o WhatsApp)
 - Vender productos/servicios en línea
-- Informar y posicionar marca
-- Portal interno de empleados / Intranet
+- Agendar citas o demostraciones
+- Informar y posicionar marca con portafolio
 - Otro (especificar)
 
 ---
@@ -453,6 +453,6 @@ Esta skill actúa como **generador de contexto** para las siguientes skills:
 |-------------------------------|----------------------------------------------------------------|
 | `diseno_ux_consultor`         | `branding_assets`, `style_adjectives`, `business_sector`       |
 | `desarrollador_web`           | `technical_scope`, `infrastructure`, `compliance_requirements` |
-| `iniciar_proyecto`            | `primary_goal` (para bifurcación Intranet vs Landing Page)     |
+| `iniciar_proyecto`            | `primary_goal`, `branding_assets`, `technical_scope` (para construir la Landing Page) |
 
 > **REGLA:** El payload JSON generado por `web-discovery` es la **fuente de verdad** para la toma de decisiones de diseño y desarrollo. Los agentes destino NO deben contradecir datos clasificados como `"reported"` sin confirmación explícita del cliente.

@@ -1,264 +1,157 @@
 {
-  "_quick_guide": "=== VISION DISCOVERY TEMPLATE v1 ===  Fill this JSON during or after your first meeting with the client. Use 'not_determined' in certainty if you did not get the answer. When finished, pass it to VISION with: 'here is the discovery for client [name]' and the agent will start the project without redundant questions.",
+  "_guia_rapida": "=== PLANTILLA DE DESCUBRIMIENTO VISION — LANDING PAGES PERSONALIZADAS v1 === Llena este archivo durante o después de la reunión con el cliente. Si no se abordó un dato, deja 'not_determined' en 'certainty'. VISION analizará este JSON con 'audit_client_readiness' para decirte qué tan listo está el proyecto y qué preguntas de seguimiento hacer antes de generar el código.",
 
   "meta": {
-    "discovery_date": "",
-    "agent_version": "web-discovery-v1",
-    "client_contact": "",
-    "client_contact_email": "",
-    "client_contact_phone": "",
-    "meeting_type": "",
-    "meeting_notes_raw": ""
+    "fecha_descubrimiento": "",
+    "version_agente": "landing-discovery-v1",
+    "contacto_cliente": "",
+    "correo_contacto": "",
+    "telefono_contacto": "",
+    "tipo_reunion": "presencial_o_videollamada",
+    "notas_libres_reunion": ""
   },
 
-  "business_profile": {
-    "company_name": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Legal or commercial name of the company"
+  "perfil_negocio": {
+    "nombre_empresa": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Nombre comercial o de marca que se mostrará en el sitio web"
     },
-    "business_sector": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "E.g.: technology, healthcare, education, manufacturing, retail, logistics, legal, real estate, restaurants, financial services"
+    "sector_industria": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Ej: consultoría legal, bienes raíces, clínica médica, restaurante, tecnología, arquitectura, servicios financieros"
     },
-    "value_proposition": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "What makes the business unique? Why would a client choose them over the competition?"
+    "propuesta_de_valor": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "¿Qué hace única a la empresa? ¿Por qué un cliente debería elegirlos a ellos?"
     },
-    "primary_goal": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Common options: generate_leads | sell_online | brand_presence | employee_portal_intranet | informational | product_catalog | other"
+    "objetivo_principal_landing": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Opciones: captar_leads_formulario | clics_a_whatsapp | llamada_telefonica | agendar_cita | presentar_portafolio | venta_o_reserva_directa"
     },
-    "target_audience": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Who visits the site? E.g.: IT directors of mid-sized companies, homemakers 25-45, university students"
+    "publico_objetivo": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "¿Quién visita el sitio? Ej: directores de empresas, familias jóvenes, profesionistas independientes"
     },
-    "competitors_or_references": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "URLs of competitor sites or sites the client likes visually. E.g.: ['https://example.com', 'https://competitor.com']"
+    "sitios_de_referencia_que_le_gustan": {
+      "valor": [],
+      "certeza": "not_determined",
+      "_pista": "URLs de páginas web que al cliente le gustan visualmente o de sus competidores"
     },
-    "company_size": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "E.g.: 1-10, 11-50, 51-200, 200+ employees"
-    },
-    "existing_website": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "URL of current site if it exists. Empty if it is a brand new site."
-    },
-    "pain_points": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "What problems do they have with their current site/web presence? E.g.: ['does not generate leads', 'looks outdated', 'not responsive', 'does not appear on Google']"
+    "puntos_de_dolor_actuales": {
+      "valor": [],
+      "certeza": "not_determined",
+      "_pista": "Qué problemas tienen hoy: 'no tenemos sitio web', 'el actual se ve anticuado', 'no se ve bien en celular', 'no genera contactos'"
     }
   },
 
-  "branding_assets": {
-    "has_logo": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if they have a logo, false if they do not"
+  "identidad_visual_y_marca": {
+    "tiene_logotipo": {
+      "valor": false,
+      "certeza": "not_determined",
+      "_pista": "true si ya tienen logo, false si no tienen o se creará uno temporal"
     },
-    "logo_format_available": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "Available formats: SVG, PNG, AI, PSD, EPS, PDF, JPG, WEBP"
+    "formato_logo_disponible": {
+      "valor": [],
+      "certeza": "not_determined",
+      "_pista": "Formatos disponibles: SVG, PNG transparente, AI, PDF, JPG"
     },
-    "color_palette": {
-      "hex_codes": {
-        "value": [],
-        "certainty": "not_determined",
-        "_hint": "Corporate color hex codes. E.g.: ['#1a365d', '#38bdf8', '#f59e0b']. Leave empty if none."
+    "paleta_de_colores": {
+      "colores_deseados_hex": {
+        "valor": [],
+        "certeza": "not_determined",
+        "_pista": "Colores corporativos en formato hexadecimal. Ej: ['#0F172A', '#2563EB', '#F8FAFC']. Dejar vacío si el cliente pide que VISION proponga la paleta."
       },
-      "disliked_colors": {
-        "value": [],
-        "certainty": "not_determined",
-        "_hint": "Colors they do NOT want to see. E.g.: ['pink', 'bright yellow', 'neon green']"
+      "colores_prohibidos_o_no_deseados": {
+        "valor": [],
+        "certeza": "not_determined",
+        "_pista": "Colores que el cliente NO quiere ver. Ej: ['amarillo chillón', 'morado', 'rojo brillante']"
       }
     },
-    "typography": {
-      "font_families": {
-        "value": [],
-        "certainty": "not_determined",
-        "_hint": "Corporate typefaces. E.g.: ['Montserrat', 'Open Sans']. Leave empty if none."
-      },
-      "has_web_license": {
-        "value": false,
-        "certainty": "not_determined",
-        "_hint": "true if they have a web license for their fonts, false if unknown or they do not"
+    "tipografia": {
+      "familias_preferidas": {
+        "valor": [],
+        "certeza": "not_determined",
+        "_pista": "Tipografías corporativas preferidas. Ej: ['Inter', 'Playfair Display', 'Poppins', 'Montserrat']. Vacío si VISION recomienda."
       }
     },
-    "style_adjectives": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "Adjectives describing the desired visual style. E.g.: ['modern', 'sober', 'tech', 'elegant', 'minimalist', 'vibrant', 'corporate', 'luxurious']"
+    "adjetivos_estilo_visual": {
+      "valor": [],
+      "certeza": "not_determined",
+      "_pista": "Adjetivos del diseño deseado: 'moderno', 'elegante', 'minimalista', 'cálido', 'tecnológico', 'corporativo', 'audaz', 'limpio'"
     },
-    "brand_manual_available": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if they have a brand manual / brand guidelines"
-    },
-    "photography_assets": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Options: client_provides | photo_shoot_pending | use_stock | generate_with_ai | not_determined"
+    "recursos_fotograficos": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Opciones: cliente_entrega_fotos | generar_ilustraciones_o_iconos | fotografia_stock_curada | diseno_tipografico_puro"
     }
   },
 
-  "content": {
-    "pages_sections": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "List of pages or sections. E.g.: ['Home', 'Services', 'About Us', 'Blog', 'Contact', 'Store', 'FAQ', 'Gallery']"
+  "estructura_y_contenido": {
+    "secciones_requeridas": {
+      "valor": ["Hero", "Servicios", "Nosotros", "Testimonios", "Contacto"],
+      "certeza": "not_determined",
+      "_pista": "Lista de bloques de la Landing. Ej: ['Hero', 'PropuestaDeValor', 'Servicios', 'Beneficios', 'Portafolio', 'Testimonios', 'FAQ', 'Contacto', 'Footer']"
     },
-    "content_provider": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Who provides texts/copy? Options: client | external_agency | vision_generates | mixed"
+    "titular_principal_hero": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Frase principal o titular llamativo en el Hero. Si no lo tiene, VISION lo redactará a partir de la propuesta de valor."
     },
-    "content_ready": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if they already have ready-to-use texts, false if they need to be created"
+    "llamado_a_la_accion_cta": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Texto exacto del botón principal. Ej: 'Cotizar Proyecto', 'Hablar por WhatsApp', 'Agendar Asesoría Gratuita'"
     },
-    "languages": {
-      "value": ["en"],
-      "certainty": "not_determined",
-      "_hint": "Site languages. E.g.: ['en'], ['en', 'es'], ['en', 'es', 'fr']"
+    "proveedor_de_textos": {
+      "valor": "vision_redacta_con_aprobacion",
+      "certeza": "not_determined",
+      "_pista": "Opciones: cliente_entrega_copy | vision_redacta_con_aprobacion | mixto"
     },
-    "seo_priority": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "SEO importance level: high | medium | low | not_applicable"
-    },
-    "blog_required": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if the site needs a blog/news section"
+    "idiomas": {
+      "valor": ["es"],
+      "certeza": "not_determined",
+      "_pista": "Idiomas del sitio. Ej: ['es'], ['es', 'en']"
     }
   },
 
-  "technical_scope": {
-    "project_type": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Project type according to VISION bifurcation: landing_page | intranet_b2b | ecommerce | web_app | informational_portal"
+  "conversion_y_contacto": {
+    "canales_de_contacto": {
+      "valor": [],
+      "certeza": "not_determined",
+      "_pista": "Ej: ['WhatsApp Business directo', 'Formulario a correo', 'Teléfono click-to-call', 'Calendly para agendar citas']"
     },
-    "estimated_pages": {
-      "value": 0,
-      "certainty": "not_determined",
-      "_hint": "Estimated number of unique pages/sections"
+    "redes_sociales": {
+      "valor": [],
+      "certeza": "not_determined",
+      "_pista": "Links de redes a enlazar en footer y cabecera. Ej: ['Instagram', 'LinkedIn', 'Facebook']"
     },
-    "required_integrations": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "E.g.: ['WhatsApp Business', 'Google Maps', 'payment gateway (Stripe/Conekta)', 'CRM HubSpot', 'Google Analytics', 'Meta Pixel', 'SMTP email', 'ERP', 'appointment calendar']"
-    },
-    "preferred_cms": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Options: next.js | wordpress | shopify | no_preference | vision_recommends"
-    },
-    "requires_auth": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if it needs user login / private portal"
-    },
-    "requires_database": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if it needs to store data (users, products, inventory, etc.)"
-    },
-    "requires_ecommerce": {
-      "value": false,
-      "certainty": "not_determined",
-      "_hint": "true if it needs online sales with cart and checkout"
-    },
-    "form_types": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "Types of forms needed. E.g.: ['contact', 'quote', 'registration', 'newsletter_subscription', 'book_appointment']"
-    },
-    "social_media_links": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "Active social media. E.g.: ['facebook.com/company', 'instagram.com/company', 'linkedin.com/company/company']"
+    "ubicacion_o_cobertura": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Dirección física, mapa interactivo o ciudad/país de cobertura del servicio"
     }
   },
 
-  "infrastructure": {
-    "domain_name": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Already registered domain. E.g.: 'mycompany.com'. Empty if they do not have one."
+  "infraestructura_y_entrega": {
+    "dominio": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Nombre de dominio registrado o deseado (ej: 'marca.com'). Vacío si se asesorará en la compra."
     },
-    "domain_registrar": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Where is it registered? E.g.: GoDaddy, Namecheap, Google Domains, Akky"
+    "preferencia_hosting": {
+      "valor": "vision_recomienda",
+      "certeza": "not_determined",
+      "_pista": "Opciones: vercel | aws_s3_cloudfront | hostinger | servidor_cliente | vision_recomienda"
     },
-    "hosting_preference": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Options: aws | vercel | own_server | shared_hosting | no_preference | vision_recommends"
-    },
-    "email_service": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Current email service. E.g.: Google Workspace, Microsoft 365, hosting email, none"
-    },
-    "ssl_certificate": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Options: has_ssl | needs_ssl | unknown"
-    },
-    "deadline": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Delivery deadline. Format: YYYY-MM-DD. E.g.: '2026-10-15'"
-    },
-    "budget_range": {
-      "value": "",
-      "certainty": "not_determined",
-      "_hint": "Budget range in USD. E.g.: '500-1000', '1000-3000', '3000-5000', '5000+', 'not_defined'"
-    },
-    "compliance_requirements": {
-      "value": [],
-      "certainty": "not_determined",
-      "_hint": "Applicable regulations. E.g.: ['GDPR', 'CCPA', 'PCI-DSS', 'HIPAA', 'none_known']"
-    }
-  },
-
-  "meeting_followup": {
-    "decision_maker": {
-      "value": "",
-      "_hint": "Who makes the final decision? Name and title."
-    },
-    "next_meeting_date": {
-      "value": "",
-      "_hint": "Next meeting date. Format: YYYY-MM-DD"
-    },
-    "deliverables_promised": {
-      "value": [],
-      "_hint": "What did they commit to deliver? E.g.: ['logo in SVG', 'About Us text', 'team photos', 'domain access']"
-    },
-    "open_questions": {
-      "value": [],
-      "_hint": "Questions left pending. E.g.: ['How many products do they sell?', 'Do they have a contract with current hosting?']"
-    },
-    "special_requests": {
-      "value": [],
-      "_hint": "Special or out-of-standard requests. E.g.: ['animation in the hero', 'live chat', 'interactive price calculator']"
-    },
-    "overall_vibe": {
-      "value": "",
-      "_hint": "Your overall impression of the client and the project in 1-2 lines. E.g.: 'Serious client, knows what they want, realistic budget. Viable project 4-6 weeks.'"
+    "fecha_objetivo_lanzamiento": {
+      "valor": "",
+      "certeza": "not_determined",
+      "_pista": "Fecha esperada de entrega (YYYY-MM-DD)"
     }
   }
 }

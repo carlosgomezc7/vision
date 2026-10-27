@@ -27,11 +27,11 @@ class TestVisionMemoryStore:
         os.rmdir(self.tmp_dir)
 
     def test_add_and_query_memory(self):
-        self.store.add_memory("doc_1", "Test text about corporate intranet", {"type": "test"})
-        results = self.store.query_memory("intranet", n_results=1)
+        self.store.add_memory("doc_1", "Test text about custom landing page", {"type": "test"})
+        results = self.store.query_memory("landing", n_results=1)
         docs = results.get("documents", [[]])[0]
         assert len(docs) == 1
-        assert "intranet" in docs[0].lower()
+        assert "landing" in docs[0].lower()
 
     def test_query_no_results(self):
         self.store.add_memory("doc_1", "Text about cooking recipes", {"type": "test"})
@@ -57,7 +57,7 @@ class TestVisionMemoryStore:
         assert "updated" in docs[0].lower()
 
     def test_metadata_preserved(self):
-        meta = {"client": "CTI", "module": "auth"}
+        meta = {"client": "CTI", "module": "landing"}
         self.store.add_memory("doc_meta", "Content", meta)
         results = self.store.query_memory("Content", n_results=1)
         # query_memory only returns text, but we verify it does not crash
@@ -65,10 +65,9 @@ class TestVisionMemoryStore:
         assert len(docs) == 1
 
     def test_fts5_search_with_prefix_and_punctuation(self):
-        self.store.add_memory("doc_sec", "Zero-Trust architecture with Next.js and Supabase RLS", {"type": "architecture"})
+        self.store.add_memory("doc_sec", "Modular architecture with Next.js and Tailwind CSS", {"type": "architecture"})
         # Query with punctuation and prefix
-        results = self.store.query_memory("Zero-Trust / Next.js", n_results=1)
+        results = self.store.query_memory("Modular / Next.js", n_results=1)
         docs = results.get("documents", [[]])[0]
         assert len(docs) == 1
-        assert "Zero-Trust" in docs[0]
-
+        assert "Modular" in docs[0]

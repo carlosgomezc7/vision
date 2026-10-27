@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "vision": {
+      "command": "/home/carlosgomezc7/Projects/vision/.venv/bin/python",
+      "args": ["-m", "src.main"],
+      "cwd": "/home/carlosgomezc7/Projects/vision"
+    },
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}

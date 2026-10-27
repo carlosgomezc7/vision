@@ -7,48 +7,68 @@ logger = get_logger("vision.tools.project_specs")
 
 def create_landing_page_spec(
     company_name: str,
-    sections: list,
-    cta_goal: str,
+    sections: list = None,
+    cta_goal: str = "Contactar por WhatsApp o Formulario",
     style_adjectives: list = None,
+    palette_hex: list = None,
+    typography: list = None,
+    contact_channels: list = None,
     store: VisionMemoryStore = None,
 ) -> str:
     """
-    Generates a formal specification for a public Landing Page (Bifurcation A in VISION protocol).
-    Ensures modular architecture under src/components/landing/ with zero database/auth dependencies.
+    Generates a formal specification for a custom, beautiful, and accessible Landing Page.
+    Ensures modular architecture under src/components/landing/* with zero database or authentication dependencies.
     """
     if store is None:
         store = VisionMemoryStore()
 
     try:
-        clean_name = company_name.strip()
-        sections_list = [s.strip().capitalize() for s in sections] if sections else ["Hero", "Services", "About", "Contact"]
-        adjectives = style_adjectives or ["modern", "corporate", "clean", "accessible"]
+        clean_name = company_name.strip() if company_name else "Cliente"
+        sections_list = [s.strip().capitalize() for s in sections] if sections else ["Hero", "Servicios", "Nosotros", "Contacto"]
+        adjectives = style_adjectives or ["moderno", "limpio", "elegante", "accesible"]
+        colors = palette_hex or ["#0F172A", "#2563EB", "#F8FAFC"]
+        typo = typography or ["Inter", "sans-serif"]
+        channels = contact_channels or ["WhatsApp", "Formulario"]
 
-        component_hierarchy = {}
+        component_hierarchy = {
+            "Header": {
+                "file": "src/components/landing/Header.tsx",
+                "description": f"Cabecera con logotipo de {clean_name}, navegación interna suave a secciones y botón CTA destacado."
+            }
+        }
+
         for sec in sections_list:
             comp_name = f"{sec}.tsx"
             component_hierarchy[sec] = {
                 "file": f"src/components/landing/{comp_name}",
-                "description": f"Dedicated component for the {sec} section of {clean_name}"
+                "description": f"Componente dedicado y modular para la sección {sec} de {clean_name}."
             }
 
+        component_hierarchy["Footer"] = {
+            "file": "src/components/landing/Footer.tsx",
+            "description": f"Pie de página accesible con derechos reservados, enlaces rápidos y datos de contacto de {clean_name}."
+        }
+
         spec = {
-            "project_type": "Landing Page / Static Corporate Portal",
+            "project_type": "Landing Page Personalizada / Sitio Web Corporativo",
             "client": clean_name,
-            "architecture_branch": "Bifurcation A (Static - No Auth / No Supabase)",
+            "architecture": "Next.js App Router (100% Estático y Modular — Cero Auth / Cero BD)",
             "primary_cta_goal": cta_goal,
             "style_adjectives": adjectives,
+            "color_palette_hex": colors,
+            "typography": typo,
+            "contact_channels": channels,
             "tech_stack": {
-                "framework": "Next.js (App Router, static export ready)",
+                "framework": "Next.js (App Router, static export)",
                 "styling": "Tailwind CSS + Lucide React + shadcn/ui",
-                "backend": "None (Static front-end)",
-                "hosting_target": "AWS S3/CloudFront, Hostinger or Vercel"
+                "design_tokens": "W3C DTCG ($value, $type) exportado a CSS Variables",
+                "hosting_target": "Vercel, AWS S3/CloudFront o Hostinger"
             },
             "required_sections": sections_list,
             "component_structure": component_hierarchy,
             "seo_metadata": {
-                "title": f"{clean_name} — Official Portal",
-                "description": f"Discover {clean_name}. {cta_goal}",
+                "title": f"{clean_name} — Sitio Oficial",
+                "description": f"Descubre {clean_name}. {cta_goal}.",
                 "open_graph": {
                     "type": "website",
                     "locale": "es_MX",
@@ -56,10 +76,11 @@ def create_landing_page_spec(
                 }
             },
             "rules": [
-                "Modular architecture: page.tsx imports from src/components/landing/*",
-                "Strict WCAG 2.2 AA contrast compliance on all action buttons and text",
-                "100% keyboard navigable with visible focus states",
-                "Zero dependencies on Supabase, database or server-side auth sessions"
+                "Arquitectura modular estricta: page.tsx solo orquesta e importa desde src/components/landing/*",
+                "Contraste estricto WCAG 2.2 AA (4.5:1 texto normal, 3.0:1 texto grande) en todos los elementos interactivos",
+                "100% navegable por teclado con indicador visual de foco explícito",
+                "Escalado al 200% sin desbordamiento horizontal (responsive mobile-first)",
+                "Cero dependencias de autenticación, sesiones de servidor o bases de datos relacionales"
             ]
         }
 
@@ -75,99 +96,4 @@ def create_landing_page_spec(
 
     except Exception as e:
         logger.error("Error generating landing page spec for %s: %s", company_name, e, exc_info=True)
-        raise
-
-
-def generate_supabase_rls_policies(
-    company_name: str,
-    modules: list,
-    roles: list = None,
-) -> str:
-    """
-    Generates production-ready PostgreSQL SQL scripts with Zero Trust Row Level Security (RLS)
-    policies for Supabase matching the PRD specification.
-    """
-    try:
-        clean_name = company_name.strip()
-        assigned_roles = roles or ["admin", "lead", "employee"]
-        module_list = [m.lower().replace(" ", "_") for m in modules] if modules else ["announcements", "documents"]
-
-        sql_lines = [
-            f"-- ============================================================================",
-            f"-- Supabase Zero Trust RLS Schema & Policies for: {clean_name}",
-            f"-- Generated by VISION MCP (CTI Soluciones)",
-            f"-- ============================================================================",
-            "",
-            "-- 1. User Profiles & Role Type Definition",
-            "DO $$ BEGIN",
-            f"    CREATE TYPE user_role AS ENUM ({', '.join(repr(r) for r in assigned_roles)});",
-            "EXCEPTION",
-            "    WHEN duplicate_object THEN null;",
-            "END $$;",
-            "",
-            "CREATE TABLE IF NOT EXISTS public.profiles (",
-            "    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,",
-            "    email TEXT NOT NULL,",
-            "    full_name TEXT,",
-            "    role user_role NOT NULL DEFAULT 'employee',",
-            "    department TEXT,",
-            "    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,",
-            "    updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL",
-            ");",
-            "",
-            "ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;",
-            "",
-            "-- Profiles Policies",
-            "CREATE POLICY \"Users can view their own profile or leads/admins view all\" ON public.profiles",
-            "    FOR SELECT USING (",
-            "        auth.uid() = id OR EXISTS (",
-            "            SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'lead')",
-            "        )",
-            "    );",
-            "",
-            "CREATE POLICY \"Admins can update user profiles\" ON public.profiles",
-            "    FOR UPDATE USING (",
-            "        EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.role = 'admin')",
-            "    );",
-            ""
-        ]
-
-        # Generate tables and RLS for each requested module
-        for mod in module_list:
-            table_name = f"intranet_{mod}"
-            sql_lines.extend([
-                f"-- ----------------------------------------------------------------------------",
-                f"-- Module: {mod.capitalize()} Table & RLS",
-                f"-- ----------------------------------------------------------------------------",
-                f"CREATE TABLE IF NOT EXISTS public.{table_name} (",
-                f"    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),",
-                f"    title TEXT NOT NULL,",
-                f"    content TEXT NOT NULL,",
-                f"    department TEXT,",
-                f"    created_by UUID REFERENCES public.profiles(id),",
-                f"    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL",
-                f");",
-                f"",
-                f"ALTER TABLE public.{table_name} ENABLE ROW LEVEL SECURITY;",
-                f"",
-                f"-- Read Policy: All authenticated employees can read",
-                f"CREATE POLICY \"Authenticated employees can read {mod}\" ON public.{table_name}",
-                f"    FOR SELECT TO authenticated USING (true);",
-                f"",
-                f"-- Write Policy: Only Admin and Lead roles can insert or modify",
-                f"CREATE POLICY \"Admins and Leads can manage {mod}\" ON public.{table_name}",
-                f"    FOR ALL TO authenticated USING (",
-                f"        EXISTS (",
-                f"            SELECT 1 FROM public.profiles p",
-                f"            WHERE p.id = auth.uid() AND p.role IN ('admin', 'lead')",
-                f"        )",
-                f"    );",
-                ""
-            ])
-
-        sql_lines.append(f"-- Schema generation complete for {clean_name}.")
-        return "\n".join(sql_lines)
-
-    except Exception as e:
-        logger.error("Error generating Supabase RLS policies for %s: %s", company_name, e, exc_info=True)
         raise
